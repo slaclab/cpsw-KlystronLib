@@ -1,0 +1,164 @@
+##############################################################################
+## This file is part of 'SLAC Firmware Standard Library'.
+## It is subject to the license terms in the LICENSE.txt file found in the 
+## top-level directory of this distribution and at: 
+##    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
+## No part of 'SLAC Firmware Standard Library', including this file, 
+## may be copied, modified, propagated, or distributed except according to 
+## the terms contained in the LICENSE.txt file.
+##############################################################################
+#schemaversion 3.0.0
+#once
+#include AmcBay0Core.yaml
+#include AmcBay1Core.yaml
+#include DaqMuxV2.yaml
+#include TimingTrigPulse.yaml
+#include GenericMemory.yaml
+#include SysgenMR.yaml
+
+AmcCarrierMrLlrfApp: &AmcCarrierMrLlrfApp 
+  name: AmcCarrierMrLlrfApp
+  description: AMC Carrier LLRF Application
+  size: 0x80000000
+  class: MMIODev
+  configPrio: 1
+  children:
+    ########
+    AmcBay0Core:
+      <<: *AmcBay0Core
+      configPrio: 1
+      at:
+        offset: 0x00000000  
+    ##################################################     
+    AmcBay1Core:
+      <<: *AmcBay1Core
+      configPrio: 2
+      at:
+        offset: 0x01000000 
+    ##################################################     
+    DaqMuxV2:
+      <<: *DaqMuxV2
+      configPrio: 3
+      at:
+        nelms: 2
+        stride: 0x01000000
+        offset: 0x02000000
+      metadata:
+        numOutPorts: &DaqMuxV2OutPorts 4
+      children:
+        InputMuxSel:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        StreamPause:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        StreamReady:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        StreamOverflow:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        StreamError:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        InputDataValid:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        StreamEnabled:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        FrameCnt:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        FormatSignWidth:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        FormatDataWidth:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        FormatSign:
+          at:
+            nelms: *DaqMuxV2OutPorts
+        DecimationAveraging:
+          at:
+            nelms: *DaqMuxV2OutPorts
+    ##################################################       
+    SysgenMR:
+      configPrio: 3
+      <<: *SysgenMR
+      at:
+        offset: 0x04000000     
+   ##################################################
+    TrigLlrfAccel:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x05000000 
+      description: "sysgen trigPulse0"
+   ##################################################
+    TrigLlrfSpare:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x05001000 
+      description: "sysgen trigPulse1"
+   ##################################################
+    TrigLlrfDaq:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x05002000 
+   ##################################################
+    TrigRtmStandby:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x05003000 
+   ##################################################
+    TrigRtmAccel:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x05004000 
+   ##################################################
+    TrigRtmData:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x05005000 
+   ##################################################
+    RtmLlrfCore:
+      configPrio: 3
+      <<: *TimingTrigPulse
+      at:
+        offset: 0x07000000
+    ##################################################
+    SysGenWaveform_I:
+      class: MMIODev
+      configPrio: 3
+      at:
+        offset: 0x06000000       
+      size: 0x2000       
+      description: "Sysgen waveform I"     
+      children:
+       MemoryArray:
+         <<: *MemoryArray
+         sizeBits: 16
+         at:
+           offset: 0x0
+           nelms: 0x1000
+    ##################################################
+    SysGenWaveform_Q:
+      class: MMIODev
+      configPrio: 3
+      at:
+        offset: 0x06100000       
+      size: 0x2000  
+      description: "Sysgen waveform Q"     
+      children:
+       MemoryArray:
+         <<: *MemoryArray
+         sizeBits: 16
+         at:
+           offset: 0x0
+           nelms: 0x1000
