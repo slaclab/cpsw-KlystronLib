@@ -5,6 +5,8 @@ SRCDIR=.
 
 include $(CPSW_DIR)/defs.mak
 
+HEADERS += LlrfMrFw.h
+
 llrfLib_SRCS  = TrigPulse.cc LlrfMrFw.cc
 llrfLib_LIBS  = yaml-cpp $(CPSW_LIBS)
 
