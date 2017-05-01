@@ -278,7 +278,7 @@ public:
 
 CKlystronMrFwAdapt::CKlystronMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
-  pKlystron_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierMrKlystronApp") ),
+  pKlystron_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp") ),
   
   trigMode_          (  IScalVal::create( pKlystron_->findByName("TimingCore/Mode") ) ),
   trigKlystronAccel_(       ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigKlystronAccel") ) ),
@@ -339,8 +339,8 @@ CKlystronMrFwAdapt::CKlystronMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryIm
 
 
   debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/RssiServerSw[1]/ValidCnt") ) ),
-  debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierMrKlystronApp/DaqMuxV2[0]/TrigCount") ) ),
-  debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierMrKlystronApp/DaqMuxV2[1]/TrigCount") ) ),
+  debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp/DaqMuxV2[0]/TrigCount") ) ),
+  debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp/DaqMuxV2[1]/TrigCount") ) ),
   
   atten0inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[0]/SetValue") ) ),
   atten1inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[1]/SetValue") ) ),

@@ -16,8 +16,8 @@
 #include GenericMemory.yaml
 #include SysgenMR.yaml
 
-AmcCarrierMrKlystronApp: &AmcCarrierMrKlystronApp 
-  name: AmcCarrierMrKlystronApp
+AmcCarrierKlystronApp: &AmcCarrierKlystronApp 
+  name: AmcCarrierKlystronApp
   description: AMC Carrier KLYSTRON Application
   size: 0x80000000
   class: MMIODev
