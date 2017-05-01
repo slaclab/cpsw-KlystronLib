@@ -1,15 +1,15 @@
-#ifndef _KLYSTRON_MR_FW_H
-#define _KLYSTRON_MR_FW_H
+#ifndef _KLYSTRON_FW_H
+#define _KLYSTRON_FW_H
 
 #include <cpsw_api_user.h>
 #include <cpsw_api_builder.h>
 
-class IKlystronMrFw;
-typedef shared_ptr<IKlystronMrFw> KlystronMrFw;
+class IKlystronFw;
+typedef shared_ptr<IKlystronFw> KlystronFw;
 
-class IKlystronMrFw : public virtual IEntry {
+class IKlystronFw : public virtual IEntry {
 public:
-    static KlystronMrFw create(Path p);
+    static KlystronFw create(Path p);
 public:
     typedef enum Trigger { KLYSTRON_ACCEL =0, KLYSTRON_STDBY=1, MOD_ACCEL=2, MOD_STDBY=3, SSB_ACCEL=4, SSB_STDBY=5, RTM_ACCEL=6, RTM_STDBY=7} Trigger;
     typedef enum TrigMode { DISABLE=0, ACCEL=1, STANDBY=2, ACCEL_OR_STANDBY=3 } TrigMode;

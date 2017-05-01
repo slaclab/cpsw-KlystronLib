@@ -1,4 +1,4 @@
-#include "KlystronMrFw.h"
+#include "KlystronFw.h"
 
 #include <cpsw_yaml.h>
 #include <yaml-cpp/yaml.h>
@@ -27,10 +27,10 @@
 #define PI 3.14159265358979323846
 
 
-class CKlystronMrFwAdapt;
-typedef shared_ptr<CKlystronMrFwAdapt> KlystronMrFwAdapt;
+class CKlystronFwAdapt;
+typedef shared_ptr<CKlystronFwAdapt> KlystronFwAdapt;
 
-class CKlystronMrFwAdapt : public IKlystronMrFw, public IEntryAdapt {
+class CKlystronFwAdapt : public IKlystronFw, public IEntryAdapt {
 protected:
     Path pKlystron_;
 /* put ScalVals, etc. here */
@@ -164,7 +164,7 @@ protected:
 
 
 public:
-        CKlystronMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
+        CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
 
 public:
     virtual void reset();
@@ -276,7 +276,7 @@ public:
     virtual void cmdRtmClearFault(void);
 };
 
-CKlystronMrFwAdapt::CKlystronMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
+CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
   pKlystron_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp") ),
   
@@ -429,12 +429,12 @@ CKlystronMrFwAdapt::CKlystronMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryIm
      
 }
 
-void CKlystronMrFwAdapt::reset()
+void CKlystronFwAdapt::reset()
 {
 
 }
 
-void CKlystronMrFwAdapt::OutputEnable(bool enable)
+void CKlystronFwAdapt::OutputEnable(bool enable)
 {
     try {
         OutputEnable_->setVal((uint32_t) enable);
@@ -443,7 +443,7 @@ void CKlystronMrFwAdapt::OutputEnable(bool enable)
         throw e;
     }
 }
-void CKlystronMrFwAdapt::CWOutputEnable(bool enable)
+void CKlystronFwAdapt::CWOutputEnable(bool enable)
 {
     try {
         CWModeEnable_->setVal((uint32_t) enable);
@@ -453,7 +453,7 @@ void CKlystronMrFwAdapt::CWOutputEnable(bool enable)
     }
 }
 
-void CKlystronMrFwAdapt::setDebugStreamSelect(StreamId sid, StreamSel ssel)
+void CKlystronFwAdapt::setDebugStreamSelect(StreamId sid, StreamSel ssel)
 {
     try {
         debugStreamSelect_[sid]->setVal(ssel);
@@ -469,7 +469,7 @@ void CKlystronMrFwAdapt::setDebugStreamSelect(StreamId sid, StreamSel ssel)
  *   freq_MHz           : EVR frequency in MHz
  */
  
-void CKlystronMrFwAdapt::setTrigMode(TrigMode mode)
+void CKlystronFwAdapt::setTrigMode(TrigMode mode)
 {
     try {
         trigMode_->setVal( (uint32_t) mode );
@@ -479,7 +479,7 @@ void CKlystronMrFwAdapt::setTrigMode(TrigMode mode)
     }
 }
 
-void CKlystronMrFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
+void CKlystronFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
 {
     try {
         triggers_[trig]->setTrigPolarity( (ITrigPulse::TrigPolarity) polarity );
@@ -489,7 +489,7 @@ void CKlystronMrFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
     }
 }
 
-void CKlystronMrFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq_MHz)
+void CKlystronFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq_MHz)
 {
     try {
         triggers_[trig]->setTrigDelay( value_ns, freq_MHz );
@@ -499,7 +499,7 @@ void CKlystronMrFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq
     }
 }
 
-void CKlystronMrFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq_MHz)
+void CKlystronFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq_MHz)
 {
     try {
         triggers_[trig]->setTrigWidth( value_ns, freq_MHz );
@@ -509,7 +509,7 @@ void CKlystronMrFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq
     }
 }
 
-void CKlystronMrFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
+void CKlystronFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
 {
 
     try {
@@ -521,7 +521,7 @@ void CKlystronMrFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
 }
 
 
-void CKlystronMrFwAdapt::setDaqSize( uint32_t buf_size )
+void CKlystronFwAdapt::setDaqSize( uint32_t buf_size )
 {
 	uint32_t nelms = (buf_size % 4096) ? (buf_size + 4096-(buf_size%4096)):buf_size;
 
@@ -548,7 +548,7 @@ void CKlystronMrFwAdapt::setDaqSize( uint32_t buf_size )
  *   refCh              : The channel ID of the reference signal
  *   fbkCh              : The channel ID of the feedback signal
  */ 
-void CKlystronMrFwAdapt::selectRefFbkChannel(uint32_t refCh, uint32_t fbkCh)
+void CKlystronFwAdapt::selectRefFbkChannel(uint32_t refCh, uint32_t fbkCh)
 {
     /* writeRegister */  
     try {
@@ -566,7 +566,7 @@ void CKlystronMrFwAdapt::selectRefFbkChannel(uint32_t refCh, uint32_t fbkCh)
  * Input:
  *   phaSP_deg : phase setpoint in degree, +/- 180
  */
-void CKlystronMrFwAdapt::setRefPhaSP(double phaSP_deg)
+void CKlystronFwAdapt::setRefPhaSP(double phaSP_deg)
 {
     int32_t pha = (int32_t)((phaSP_deg/180.0) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_PHS_FRACTION));
     try {
@@ -584,7 +584,7 @@ void CKlystronMrFwAdapt::setRefPhaSP(double phaSP_deg)
  *   scale              : Scale factor of the feedback signal (should be in the range of [-1, 1])
  *   phase_deg       : Rotation angle (radian) of the feedback siganl
  */
-void  CKlystronMrFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplitude_norm, double phase_deg)
+void  CKlystronFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplitude_norm, double phase_deg)
 {
     int32_t cs   = (int32_t)(amplitude_norm * cos( phase_deg * PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));
     int32_t sn   = (int32_t)(amplitude_norm * sin( phase_deg * PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));    
@@ -610,7 +610,7 @@ void  CKlystronMrFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double ampl
  *   scale              : Scale factor of the feedback signal (should be in the range of [-1, 1])
  *   phase_deg       : Rotation angle (radian) of the feedback siganl
  */
-void  CKlystronMrFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *amplitude_norm, double *phase_deg)
+void  CKlystronFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *amplitude_norm, double *phase_deg)
 {    
     int32_t cs = 0;
     int32_t sn = 0;
@@ -635,7 +635,7 @@ void  CKlystronMrFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *amp
     }
 }
 
-void CKlystronMrFwAdapt::enableTimeslotCorrection(bool enable)
+void CKlystronFwAdapt::enableTimeslotCorrection(bool enable)
 {
     try {
 	enableTimeslotCorrection_->setVal( (uint32_t) enable );
@@ -651,7 +651,7 @@ void CKlystronMrFwAdapt::enableTimeslotCorrection(bool enable)
  *   phase                 : Feedforwad value in degrees, +/- 180
  *   amplitude             : Feedforward value, normalized 
  */
-void  CKlystronMrFwAdapt::setFeedforward(double phase, double amplitude)
+void  CKlystronFwAdapt::setFeedforward(double phase, double amplitude)
 {
     /* FPGA treats phase as normalized +/- 1 */
     int32_t p = (int32_t)((phase/180.0) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
@@ -672,7 +672,7 @@ void  CKlystronMrFwAdapt::setFeedforward(double phase, double amplitude)
  *   phase              : Gain value
  *   amplitude          : Gain value
  */
-void  CKlystronMrFwAdapt::setGain(double phase, double amplitude)
+void  CKlystronFwAdapt::setGain(double phase, double amplitude)
 {
     int32_t p = (int32_t)(phase * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
     int32_t a = (int32_t)(amplitude * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
@@ -690,7 +690,7 @@ void  CKlystronMrFwAdapt::setGain(double phase, double amplitude)
 /**
  * Set the feedback correction limits
  */
-void  CKlystronMrFwAdapt::setFeedbackCorrLimits(double phase, double amplitude)
+void  CKlystronFwAdapt::setFeedbackCorrLimits(double phase, double amplitude)
 {
     int32_t p = (int32_t)(phase * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
     int32_t a = (int32_t)(amplitude * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
@@ -710,7 +710,7 @@ void  CKlystronMrFwAdapt::setFeedbackCorrLimits(double phase, double amplitude)
  *   value_ns           : Time value in ns
  *   freq_MHz           : Sampling frequency in MHz
  */
-void  CKlystronMrFwAdapt::setIntgStart(double value_ns, double freq_MHz)
+void  CKlystronFwAdapt::setIntgStart(double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * ( freq_MHz / 64.0 ) / 1000.0);
     /* writeRegister */ 
@@ -722,7 +722,7 @@ void  CKlystronMrFwAdapt::setIntgStart(double value_ns, double freq_MHz)
     }
 }
 
-void  CKlystronMrFwAdapt::setIntgEnd(  double value_ns, double freq_MHz)
+void  CKlystronFwAdapt::setIntgEnd(  double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * ( freq_MHz / 64.0 ) / 1000.0);
     /* writeRegister */  
@@ -740,7 +740,7 @@ void  CKlystronMrFwAdapt::setIntgEnd(  double value_ns, double freq_MHz)
  *   value_ns           : Time value in ns
  *   freq_MHz           : Sampling frequency in MHz
  */
-void  CKlystronMrFwAdapt::setApplStart(double value_ns, double freq_MHz)
+void  CKlystronFwAdapt::setApplStart(double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * freq_MHz / 1000.0);
     /* writeRegister */ 
@@ -752,7 +752,7 @@ void  CKlystronMrFwAdapt::setApplStart(double value_ns, double freq_MHz)
     }
 }
 
-void  CKlystronMrFwAdapt::setApplEnd(  double value_ns, double freq_MHz)
+void  CKlystronFwAdapt::setApplEnd(  double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * freq_MHz / 1000.0);
     /* writeRegister */ 
@@ -769,7 +769,7 @@ void  CKlystronMrFwAdapt::setApplEnd(  double value_ns, double freq_MHz)
  * Input:
  *   offset             : Offset in digits
  */
-void  CKlystronMrFwAdapt::setDACOffset(int16_t offset)
+void  CKlystronFwAdapt::setDACOffset(int16_t offset)
 {
     /* writeRegister */   
     try {
@@ -784,7 +784,7 @@ void  CKlystronMrFwAdapt::setDACOffset(int16_t offset)
  * Set the limits for DAC output signal
  *   limit              : Limit value in digits
  */
-void  CKlystronMrFwAdapt::setAmpLimit( int16_t high, int16_t low)
+void  CKlystronFwAdapt::setAmpLimit( int16_t high, int16_t low)
 {
     /* writeRegister */   
     try {
@@ -804,7 +804,7 @@ void  CKlystronMrFwAdapt::setAmpLimit( int16_t high, int16_t low)
  *   ISPTable           : set point table for I
  *   QSPTable           : set point table for Q
  */
-void  CKlystronMrFwAdapt::setIQSPTable(uint32_t pno, double *ISPTable, double *QSPTable)
+void  CKlystronFwAdapt::setIQSPTable(uint32_t pno, double *ISPTable, double *QSPTable)
 {
     uint32_t i;
     std::vector<int16_t> Idata( FWC_COMMON_PLATFORM_IQFB_CONST_SP_TAB_BUF_DEPTH, 0 );
@@ -831,13 +831,13 @@ void  CKlystronMrFwAdapt::setIQSPTable(uint32_t pno, double *ISPTable, double *Q
 /** 
  * Set the non-IQ coefficient index offset value (will be valid only you press the apply button)
  */
-void  CKlystronMrFwAdapt::setNonIQCoefOffset(uint32_t offset)
+void  CKlystronFwAdapt::setNonIQCoefOffset(uint32_t offset)
 {
     nonIQCoefOffset_->setVal( offset );  
 }
 
 /* Fimrware readings */
-void CKlystronMrFwAdapt::getAppFwInfo(uint32_t *firmwareName, uint32_t *majorVer, uint32_t *minorVer, uint32_t *buildNum)
+void CKlystronFwAdapt::getAppFwInfo(uint32_t *firmwareName, uint32_t *majorVer, uint32_t *minorVer, uint32_t *buildNum)
 {
     /* read register var_version */
     sysgenMajorVersion_->getVal( majorVer );
@@ -845,22 +845,22 @@ void CKlystronMrFwAdapt::getAppFwInfo(uint32_t *firmwareName, uint32_t *majorVer
     fpgaVersion_->getVal( buildNum );
 }
 
-void  CKlystronMrFwAdapt::getRaceConditionFlags(uint32_t *accFlags, uint32_t *stdbyFlags, uint32_t *spareFlags)
+void  CKlystronFwAdapt::getRaceConditionFlags(uint32_t *accFlags, uint32_t *stdbyFlags, uint32_t *spareFlags)
 {
   
 }
 
-void CKlystronMrFwAdapt::getADCValid(bool *valid)
+void CKlystronFwAdapt::getADCValid(bool *valid)
 {
     *valid = true;
 }
 
-void  CKlystronMrFwAdapt::getPulseCounter(uint32_t *pulseCnt)
+void  CKlystronFwAdapt::getPulseCounter(uint32_t *pulseCnt)
 {
     trigCounter_->getVal( pulseCnt ); 
 }
 
-void  CKlystronMrFwAdapt::getMeaTrigPeriod(double *value_ms, double freq_MHz)
+void  CKlystronFwAdapt::getMeaTrigPeriod(double *value_ms, double freq_MHz)
 {
     uint32_t u32;
     measuredTrigPeriod_->getVal( &u32 );
@@ -868,21 +868,21 @@ void  CKlystronMrFwAdapt::getMeaTrigPeriod(double *value_ms, double freq_MHz)
     *value_ms = u32 / ( freq_MHz * 1000.0 );
 }
 
-void  CKlystronMrFwAdapt::getNonIQCoefCur(uint32_t *cur)
+void  CKlystronFwAdapt::getNonIQCoefCur(uint32_t *cur)
 {
     nonIQCoefCurr_->getVal( cur );
 }
 
 
 
-void  CKlystronMrFwAdapt::getFwStatus(uint32_t *platformStatus, uint32_t *RFCtrlStatus)
+void  CKlystronFwAdapt::getFwStatus(uint32_t *platformStatus, uint32_t *RFCtrlStatus)
 {
   
 }
 
 
 
-void CKlystronMrFwAdapt::armDaq()
+void CKlystronFwAdapt::armDaq()
 {
 //    waveformInit_->setVal( (uint64_t) 1 );
 //    waveformInit_->setVal( (uint64_t) 0 );
@@ -890,7 +890,7 @@ void CKlystronMrFwAdapt::armDaq()
     trigHwArm_->setVal( (uint64_t) 0 );
 }
 
-void CKlystronMrFwAdapt::initBuf(void)
+void CKlystronFwAdapt::initBuf(void)
 {
 
     waveformInit_->setVal( (uint64_t) 1 );
@@ -899,13 +899,13 @@ void CKlystronMrFwAdapt::initBuf(void)
 }
 
 
-void CKlystronMrFwAdapt::loadConfigFromYamlFile( const char *filename, const char *yaml_dir)
+void CKlystronFwAdapt::loadConfigFromYamlFile( const char *filename, const char *yaml_dir)
 {
     YAML::Node config( CYamlFieldFactoryBase::loadPreprocessedYamlFile( filename, yaml_dir ) );
     p_->loadConfigFromYaml( config );
 }
 
-void CKlystronMrFwAdapt::dumpConfigToYamlFile( const char *filename, const char *yaml_dir)
+void CKlystronFwAdapt::dumpConfigToYamlFile( const char *filename, const char *yaml_dir)
 {
     YAML::Node config;
     p_->dumpConfigToYaml( config );
@@ -918,17 +918,17 @@ void CKlystronMrFwAdapt::dumpConfigToYamlFile( const char *filename, const char 
 }
 
 
-KlystronMrFw IKlystronMrFw::create(Path p)
+KlystronFw IKlystronFw::create(Path p)
 {
-    //KlystronMrFwAdapt rval = IEntryAdapt::check_interface<KlystronMrFwAdapt, Entry>(p);
+    //KlystronFwAdapt rval = IEntryAdapt::check_interface<KlystronFwAdapt, Entry>(p);
     //return rval;
-    return IEntryAdapt::check_interface<KlystronMrFwAdapt, DevImpl>( p );
+    return IEntryAdapt::check_interface<KlystronFwAdapt, DevImpl>( p );
 }
 
 
 //
 
-void CKlystronMrFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
+void CKlystronFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
 {
     try {
         debugPacketCnt_->getVal(dbgCnt);
@@ -938,7 +938,7 @@ void CKlystronMrFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
     }
 }
 
-void CKlystronMrFwAdapt::getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1)
+void CKlystronFwAdapt::getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1)
 {
     try{
       debugTrgCnt0_->getVal(dbgCnt0);
@@ -950,7 +950,7 @@ void CKlystronMrFwAdapt::getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1)
 }
 
 
-void CKlystronMrFwAdapt::setAtten(uint32_t att, int bay, int chn)
+void CKlystronFwAdapt::setAtten(uint32_t att, int bay, int chn)
 {
     int index = bay*6 + chn;
     if(index >= 10) return; // bay1 chn 4 and chn 5 are not available.
@@ -962,7 +962,7 @@ void CKlystronMrFwAdapt::setAtten(uint32_t att, int bay, int chn)
     }
 }
 
-void CKlystronMrFwAdapt::setAtten(uint32_t att, int index)
+void CKlystronFwAdapt::setAtten(uint32_t att, int index)
 {
     if(index > 9) return;  // bay1 chn 4 and chn5 are not available.
     try {
@@ -974,7 +974,7 @@ void CKlystronMrFwAdapt::setAtten(uint32_t att, int index)
 
 }
 
-void CKlystronMrFwAdapt::getIntPhaseError(int32_t *phase)
+void CKlystronFwAdapt::getIntPhaseError(int32_t *phase)
 {
     try {
         intPhaseError_->getVal((uint32_t*)phase);
@@ -984,7 +984,7 @@ void CKlystronMrFwAdapt::getIntPhaseError(int32_t *phase)
     }
 }
 
-void CKlystronMrFwAdapt::setCKPhase(uint32_t ckPhase)
+void CKlystronFwAdapt::setCKPhase(uint32_t ckPhase)
 {
     try {
         ckPhaseSet_->setVal(ckPhase);
@@ -995,7 +995,7 @@ void CKlystronMrFwAdapt::setCKPhase(uint32_t ckPhase)
 } 
 
 
-void CKlystronMrFwAdapt::getRtmStatus(uint32_t *rtmStatus)
+void CKlystronFwAdapt::getRtmStatus(uint32_t *rtmStatus)
 {
     try {
         rtmStatus_->getVal(rtmStatus);
@@ -1006,7 +1006,7 @@ void CKlystronMrFwAdapt::getRtmStatus(uint32_t *rtmStatus)
 }
 
 
-void CKlystronMrFwAdapt::getRtmFirmwareVersion(uint32_t *rtmFirmwareVersion)
+void CKlystronFwAdapt::getRtmFirmwareVersion(uint32_t *rtmFirmwareVersion)
 {
     try {
         rtmFirmwareVersion_->getVal(rtmFirmwareVersion);
@@ -1017,7 +1017,7 @@ void CKlystronMrFwAdapt::getRtmFirmwareVersion(uint32_t *rtmFirmwareVersion)
 }
 
 
-void CKlystronMrFwAdapt::getRtmSystemId(char *systemIdString)
+void CKlystronFwAdapt::getRtmSystemId(char *systemIdString)
 {
     uint16_t id[4];
     char *c;
@@ -1042,7 +1042,7 @@ void CKlystronMrFwAdapt::getRtmSystemId(char *systemIdString)
 }
 
 
-void CKlystronMrFwAdapt::getRtmSubType(char *subTypeString)
+void CKlystronFwAdapt::getRtmSubType(char *subTypeString)
 {
     uint16_t stype[4];
     char *c;
@@ -1065,7 +1065,7 @@ void CKlystronMrFwAdapt::getRtmSubType(char *subTypeString)
 }
 
 
-void CKlystronMrFwAdapt::getRtmFirmwareDate(char *firmwareDateString)
+void CKlystronFwAdapt::getRtmFirmwareDate(char *firmwareDateString)
 {
     uint16_t sdate[4];
     char *c;
@@ -1089,7 +1089,7 @@ void CKlystronMrFwAdapt::getRtmFirmwareDate(char *firmwareDateString)
 
 }
 
-void CKlystronMrFwAdapt::setRtmKlyWiperRegA(uint32_t reg)
+void CKlystronFwAdapt::setRtmKlyWiperRegA(uint32_t reg)
 {
     try {
         rtmKlyWiperRegA_->setVal(reg);
@@ -1099,7 +1099,7 @@ void CKlystronMrFwAdapt::setRtmKlyWiperRegA(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmKlyWiperRegB(uint32_t reg)
+void CKlystronFwAdapt::setRtmKlyWiperRegB(uint32_t reg)
 {
     try {
         rtmKlyWiperRegB_->setVal(reg);
@@ -1109,7 +1109,7 @@ void CKlystronMrFwAdapt::setRtmKlyWiperRegB(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmKlyNVRegA(uint32_t reg)
+void CKlystronFwAdapt::setRtmKlyNVRegA(uint32_t reg)
 {
 
     try {
@@ -1120,7 +1120,7 @@ void CKlystronMrFwAdapt::setRtmKlyNVRegA(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmKlyNVRegB(uint32_t reg)
+void CKlystronFwAdapt::setRtmKlyNVRegB(uint32_t reg)
 {
     try {
         rtmKlyNVRegB_->setVal(reg);
@@ -1130,7 +1130,7 @@ void CKlystronMrFwAdapt::setRtmKlyNVRegB(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmModWiperRegA(uint32_t reg)
+void CKlystronFwAdapt::setRtmModWiperRegA(uint32_t reg)
 {
     try {
         rtmModWiperRegA_->setVal(reg);
@@ -1140,7 +1140,7 @@ void CKlystronMrFwAdapt::setRtmModWiperRegA(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmModWiperRegB(uint32_t reg)
+void CKlystronFwAdapt::setRtmModWiperRegB(uint32_t reg)
 {
     try {
         rtmModWiperRegB_->setVal(reg);
@@ -1150,7 +1150,7 @@ void CKlystronMrFwAdapt::setRtmModWiperRegB(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmModNVRegA(uint32_t reg)
+void CKlystronFwAdapt::setRtmModNVRegA(uint32_t reg)
 {
     try {
         rtmModNVRegA_->setVal(reg);
@@ -1160,7 +1160,7 @@ void CKlystronMrFwAdapt::setRtmModNVRegA(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmModNVRegB(uint32_t reg)
+void CKlystronFwAdapt::setRtmModNVRegB(uint32_t reg)
 {
     try {
         rtmModNVRegB_->setVal(reg);
@@ -1170,7 +1170,7 @@ void CKlystronMrFwAdapt::setRtmModNVRegB(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::setRtmCfgRegister(uint32_t reg)
+void CKlystronFwAdapt::setRtmCfgRegister(uint32_t reg)
 {
     try {
         rtmCfgRegister_->setVal(reg);
@@ -1180,7 +1180,7 @@ void CKlystronMrFwAdapt::setRtmCfgRegister(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::getRtmFaultOutStatus(uint32_t *rtmFaultOutStatus)
+void CKlystronFwAdapt::getRtmFaultOutStatus(uint32_t *rtmFaultOutStatus)
 {
     try {
         rtmFaultOutStatus_->getVal(rtmFaultOutStatus);
@@ -1190,7 +1190,7 @@ void CKlystronMrFwAdapt::getRtmFaultOutStatus(uint32_t *rtmFaultOutStatus)
     }
 }
 
-void CKlystronMrFwAdapt::getRtmAdcLockedStatus(uint32_t *rtmAdcLockedStatus)
+void CKlystronFwAdapt::getRtmAdcLockedStatus(uint32_t *rtmAdcLockedStatus)
 {    
     try {
         rtmAdcLockedStatus_->getVal(rtmAdcLockedStatus);
@@ -1200,7 +1200,7 @@ void CKlystronMrFwAdapt::getRtmAdcLockedStatus(uint32_t *rtmAdcLockedStatus)
     }
 }
 
-void CKlystronMrFwAdapt::getRtmRFOffStatus(uint32_t *rtmRFOffStatus)
+void CKlystronFwAdapt::getRtmRFOffStatus(uint32_t *rtmRFOffStatus)
 {
     try {
         rtmRFOffStatus_->getVal(rtmRFOffStatus);
@@ -1210,7 +1210,7 @@ void CKlystronMrFwAdapt::getRtmRFOffStatus(uint32_t *rtmRFOffStatus)
     }
 }
 
-void CKlystronMrFwAdapt::getRtmAdcIn(uint32_t v[])
+void CKlystronFwAdapt::getRtmAdcIn(uint32_t v[])
 {
     try {
         rtmAdcIn_->getVal(v,4);
@@ -1220,7 +1220,7 @@ void CKlystronMrFwAdapt::getRtmAdcIn(uint32_t v[])
     }
 }
 
-void CKlystronMrFwAdapt::setRtmMode(uint32_t reg)
+void CKlystronFwAdapt::setRtmMode(uint32_t reg)
 {
     try {
         rtmMode_->setVal(reg);
@@ -1230,7 +1230,7 @@ void CKlystronMrFwAdapt::setRtmMode(uint32_t reg)
     }
 }
 
-void CKlystronMrFwAdapt::getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[])
+void CKlystronFwAdapt::getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[])
 {
     try {
         rtmAdcBufferBeamIV_->getVal(v, (unsigned) 0x200);
@@ -1240,7 +1240,7 @@ void CKlystronMrFwAdapt::getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[])
     }
 }
 
-void CKlystronMrFwAdapt::getRtmFastAdcBufferForwardReflect(uint32_t v[])
+void CKlystronFwAdapt::getRtmFastAdcBufferForwardReflect(uint32_t v[])
 {
     try {
         rtmAdcBufferFwdRef_->getVal(v, (unsigned) 0x200);
@@ -1250,7 +1250,7 @@ void CKlystronMrFwAdapt::getRtmFastAdcBufferForwardReflect(uint32_t v[])
     }
 }
 
-void CKlystronMrFwAdapt::cmdRtmRearm(void)
+void CKlystronFwAdapt::cmdRtmRearm(void)
 {
     try {
         rtmRearm_Cmd_->execute();
@@ -1260,7 +1260,7 @@ void CKlystronMrFwAdapt::cmdRtmRearm(void)
     }
 }
 
-void CKlystronMrFwAdapt::cmdRtmSwTrigger(void)
+void CKlystronFwAdapt::cmdRtmSwTrigger(void)
 {
     try {
         rtmSwTrigger_Cmd_->execute();
@@ -1270,7 +1270,7 @@ void CKlystronMrFwAdapt::cmdRtmSwTrigger(void)
     }
 }
 
-void CKlystronMrFwAdapt::cmdRtmClearFault(void)
+void CKlystronFwAdapt::cmdRtmClearFault(void)
 {
     try {
         rtmClearFault_Cmd_->execute();
