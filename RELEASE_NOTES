@@ -1,3 +1,6 @@
+R1.2.0         05-01-2017     Thomas Kurty (tkurty)
+               - Rename library from llrfLib to KlystronLib
+
 R1.1.0         03-22-2017     Kukhee Kim   (KHKIM)
                - rebuild against new build system
                
