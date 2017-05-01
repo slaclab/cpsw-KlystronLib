@@ -1,5 +1,5 @@
 - AmcCarrierMrEth:
-    - AmcCarrierMrLlrfApp:
+    - AmcCarrierMrKlysApp:
         - AmcBay0Core:
             - DacAD5541Mux:
                 - SckHalfPeriod: !<value> 0x0023
@@ -1426,7 +1426,7 @@
                 - Ch7
                 - Ch8
                 - Ch9
-        - TrigLlrfAccel:
+        - TrigKlysAccel:
             - PulsePolarity: !<value> 0x0
             - PulseWidth: !<value> 0x0000094C
             - PulseDelay: !<value> 0x0001A4CC
@@ -1439,7 +1439,7 @@
                 - 0x00000000
                 - 0x00000000
                 - 0x00000000
-        - TrigLlrfDaq:
+        - TrigKlysDaq:
             - PulsePolarity: !<value> 0x0
             - PulseWidth: !<value> 0x0000094C
             - PulseDelay: !<value> 0x0001A4CC
@@ -1515,7 +1515,7 @@
             - Mux3: !<value> 0x1
             - Mux2: !<value> 0x0
             - Mux1: !<value> 0x0
-        - TrigLlrfSpare:
+        - TrigKlysSpare:
             - PulsePolarity: !<value> 0x0
             - PulseWidth: !<value> 0x0000094C
             - PulseDelay: !<value> 0x0001A29D
@@ -1569,7 +1569,7 @@
                 - 0x00000000
                 - 0x00000000
                 - 0x00000000
-        - RtmLlrfCore:
+        - RtmKlysCore:
             - PulsePolarity: !<value> 0x1
             - PulseWidth: !<value> 0x0000ffff
             - PulseDelay: !<value> 0x0000ffff

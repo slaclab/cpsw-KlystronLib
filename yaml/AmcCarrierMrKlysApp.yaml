@@ -16,9 +16,9 @@
 #include GenericMemory.yaml
 #include SysgenMR.yaml
 
-AmcCarrierMrLlrfApp: &AmcCarrierMrLlrfApp 
-  name: AmcCarrierMrLlrfApp
-  description: AMC Carrier LLRF Application
+AmcCarrierMrKlysApp: &AmcCarrierMrKlysApp 
+  name: AmcCarrierMrKlysApp
+  description: AMC Carrier KLYS Application
   size: 0x80000000
   class: MMIODev
   configPrio: 1
@@ -89,21 +89,21 @@ AmcCarrierMrLlrfApp: &AmcCarrierMrLlrfApp
       at:
         offset: 0x04000000     
    ##################################################
-    TrigLlrfAccel:
+    TrigKlysAccel:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
         offset: 0x05000000 
       description: "sysgen trigPulse0"
    ##################################################
-    TrigLlrfSpare:
+    TrigKlysSpare:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
         offset: 0x05001000 
       description: "sysgen trigPulse1"
    ##################################################
-    TrigLlrfDaq:
+    TrigKlysDaq:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
@@ -127,7 +127,7 @@ AmcCarrierMrLlrfApp: &AmcCarrierMrLlrfApp
       at:
         offset: 0x05005000 
    ##################################################
-    RtmLlrfCore:
+    RtmKlysCore:
       configPrio: 3
       <<: *TimingTrigPulse
       at:

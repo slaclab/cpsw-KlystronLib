@@ -10,10 +10,10 @@
 #schemaversion 3.0.0
 #once
 
-RtmLlrfCore: &RtmLlrfCore 
+RtmKlysCore: &RtmKlysCore 
   class: MMIODev
   configPrio: 1
-  description: "LLRF RTM interlock core"
+  description: "KLYS RTM interlock core"
   size: 0x3000
   #########
   children:

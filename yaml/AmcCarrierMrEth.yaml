@@ -10,7 +10,7 @@
 #schemaversion 3.0.0
 #once
 #include AmcCarrierCore.yaml
-#include AmcCarrierMrLlrfApp.yaml
+#include AmcCarrierMrKlysApp.yaml
 
 AmcCarrierMrEth: &AmcCarrierMrEth 
   name: AmcCarrierMrEth
@@ -26,8 +26,8 @@ AmcCarrierMrEth: &AmcCarrierMrEth
       at:
         offset: 0x00000000  
     ##################################################     
-    AmcCarrierMrLlrfApp:
-      <<: *AmcCarrierMrLlrfApp
+    AmcCarrierMrKlysApp:
+      <<: *AmcCarrierMrKlysApp
       at:
         offset: 0x80000000 
     ##################################################     
@@ -43,9 +43,9 @@ AmcCarrierMrEth: &AmcCarrierMrEth
         # Trigger bay 0 
         # Only Bay 0 triggered because the module triggers are interconnected in hw and
         # Bay 1 gets triggered automatically by Cascaded trigger        
-        - entry: AmcCarrierMrLlrfApp/DaqMuxV2[0]/TriggerDaq
+        - entry: AmcCarrierMrKlysApp/DaqMuxV2[0]/TriggerDaq
           value: 0x1
         # In case we trigger bay 0 later
-        # - entry: AmcCarrierLlrfApp/DaqMuxV2[1]/TriggerDaq       
+        # - entry: AmcCarrierKlysApp/DaqMuxV2[1]/TriggerDaq       
           # value: 0x1
    ##################################################

@@ -18,7 +18,7 @@
 #include SigGenRam.yaml
 
 AmcBay1Core: &AmcBay1Core 
-  description: "AMC1 LLRF Module (SD-376-396-17)"
+  description: "AMC1 KLYS Module (SD-376-396-17)"
   size: 0x00800000
   class: MMIODev
   configPrio: 1
