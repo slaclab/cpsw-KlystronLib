@@ -1,17 +1,17 @@
-#ifndef _KLYS_MR_FW_H
-#define _KLYS_MR_FW_H
+#ifndef _KLYSTRON_MR_FW_H
+#define _KLYSTRON_MR_FW_H
 
 #include <cpsw_api_user.h>
 #include <cpsw_api_builder.h>
 
-class IKlysMrFw;
-typedef shared_ptr<IKlysMrFw> KlysMrFw;
+class IKlystronMrFw;
+typedef shared_ptr<IKlystronMrFw> KlystronMrFw;
 
-class IKlysMrFw : public virtual IEntry {
+class IKlystronMrFw : public virtual IEntry {
 public:
-    static KlysMrFw create(Path p);
+    static KlystronMrFw create(Path p);
 public:
-    typedef enum Trigger { KLYS_ACCEL =0, KLYS_STDBY=1, MOD_ACCEL=2, MOD_STDBY=3, SSB_ACCEL=4, SSB_STDBY=5, RTM_ACCEL=6, RTM_STDBY=7} Trigger;
+    typedef enum Trigger { KLYSTRON_ACCEL =0, KLYSTRON_STDBY=1, MOD_ACCEL=2, MOD_STDBY=3, SSB_ACCEL=4, SSB_STDBY=5, RTM_ACCEL=6, RTM_STDBY=7} Trigger;
     typedef enum TrigMode { DISABLE=0, ACCEL=1, STANDBY=2, ACCEL_OR_STANDBY=3 } TrigMode;
     typedef enum TrigPolarity { NORMAL =0, INVERTED=1} TrigPolarity;
     typedef enum Timeslot{ ONE = 1, TWO = 2, THREE = 3, FOUR = 4, FIVE = 5, SIX = 6 } Timeslot;

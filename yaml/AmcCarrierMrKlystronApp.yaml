@@ -16,9 +16,9 @@
 #include GenericMemory.yaml
 #include SysgenMR.yaml
 
-AmcCarrierMrKlysApp: &AmcCarrierMrKlysApp 
-  name: AmcCarrierMrKlysApp
-  description: AMC Carrier KLYS Application
+AmcCarrierMrKlystronApp: &AmcCarrierMrKlystronApp 
+  name: AmcCarrierMrKlystronApp
+  description: AMC Carrier KLYSTRON Application
   size: 0x80000000
   class: MMIODev
   configPrio: 1
@@ -89,21 +89,21 @@ AmcCarrierMrKlysApp: &AmcCarrierMrKlysApp
       at:
         offset: 0x04000000     
    ##################################################
-    TrigKlysAccel:
+    TrigKlystronAccel:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
         offset: 0x05000000 
       description: "sysgen trigPulse0"
    ##################################################
-    TrigKlysSpare:
+    TrigKlystronSpare:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
         offset: 0x05001000 
       description: "sysgen trigPulse1"
    ##################################################
-    TrigKlysDaq:
+    TrigKlystronDaq:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
@@ -127,7 +127,7 @@ AmcCarrierMrKlysApp: &AmcCarrierMrKlysApp
       at:
         offset: 0x05005000 
    ##################################################
-    RtmKlysCore:
+    RtmKlystronCore:
       configPrio: 3
       <<: *TimingTrigPulse
       at:

@@ -18,7 +18,7 @@
 
 AmcBay0Core: &AmcBay0Core 
   name: AmcBay0Core
-  description: "AMC0 KLYS Module (SD-376-396-16)"
+  description: "AMC0 KLYSTRON Module (SD-376-396-16)"
   class: MMIODev
   configPrio: 1
   size: 0x00800000

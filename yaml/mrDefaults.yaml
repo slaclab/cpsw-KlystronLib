@@ -1,5 +1,5 @@
 - AmcCarrierMrEth:
-    - AmcCarrierMrKlysApp:
+    - AmcCarrierMrKlystronApp:
         - AmcBay0Core:
             - DacAD5541Mux:
                 - SckHalfPeriod: !<value> 0x0023
@@ -1426,7 +1426,7 @@
                 - Ch7
                 - Ch8
                 - Ch9
-        - TrigKlysAccel:
+        - TrigKlystronAccel:
             - PulsePolarity: !<value> 0x0
             - PulseWidth: !<value> 0x0000094c
             - PulseDelay: !<value> 0x0001a4cc
@@ -1439,7 +1439,7 @@
                 - 0x00000000
                 - 0x00000000
                 - 0x00000000
-        - TrigKlysDaq:
+        - TrigKlystronDaq:
             - PulsePolarity: !<value> 0x0
             - PulseWidth: !<value> 0x0000094c
             - PulseDelay: !<value> 0x0001a4f0
@@ -1515,7 +1515,7 @@
             - Mux3: !<value> 0x1
             - Mux2: !<value> 0x0
             - Mux1: !<value> 0x0
-        - TrigKlysStandby:
+        - TrigKlystronStandby:
             - PulsePolarity: !<value> 0x0
             - PulseWidth: !<value> 0x0000094c
             - PulseDelay: !<value> 0x0001a4f0
@@ -1569,7 +1569,7 @@
                 - 0x00000000
                 - 0x00000000
                 - 0x00000000
-        - RtmKlysCore:
+        - RtmKlystronCore:
             - PulsePolarity: !<value> 0x1
             - PulseWidth: !<value> 0x0000ffff
             - PulseDelay: !<value> 0x0000ffff

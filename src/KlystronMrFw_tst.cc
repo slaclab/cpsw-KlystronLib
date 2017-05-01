@@ -1,5 +1,5 @@
 #include <cpsw_api_user.h>
-#include <KlysMrFw.h>
+#include <KlystronMrFw.h>
 #include <vector>
 #include <string>
 #include <dlfcn.h>
@@ -35,7 +35,7 @@ try {
 	Path p = IPath::loadYamlFile( use_yaml, "NetIODev" );
         Path p_mmio = p->findByName("mmio");
 
-	KlysMrFw fw = IKlysMrFw::create( p_mmio );
+	KlystronMrFw fw = IKlystronMrFw::create( p_mmio );
 
 /* for now we will handle streams ourselves */
 	std::vector<Stream> strms;
@@ -64,9 +64,9 @@ try {
 	uint32_t delay_ns = 10000;
 	uint32_t width_ns = 40000;
 
-	fw->setTrigDelay(  IKlysMrFw::KLYS_ACCEL, delay_ns );
-	fw->setTrigWidth(  IKlysMrFw::KLYS_ACCEL, width_ns );
-	fw->setTrigOpCode( IKlysMrFw::KLYS_ACCEL, opCode );
+	fw->setTrigDelay(  IKlystronMrFw::KLYSTRON_ACCEL, delay_ns );
+	fw->setTrigWidth(  IKlystronMrFw::KLYSTRON_ACCEL, width_ns );
+	fw->setTrigOpCode( IKlystronMrFw::KLYSTRON_ACCEL, opCode );
 	
 /* setup IQ table */
 
@@ -87,7 +87,7 @@ try {
 	fw->setIQSPTable( 4096, (double *) &i_vec[0], (double *) &q_vec[0] );
 
 /* Test SW rotation */
-	fw->setSWFeedbackCorrection( IKlysMrFw::ONE, 1, 90.0 );
+	fw->setSWFeedbackCorrection( IKlystronMrFw::ONE, 1, 90.0 );
 
 	double start_ns = 0;
 	double end_ns   = 4000;
