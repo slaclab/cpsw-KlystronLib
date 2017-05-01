@@ -1,4 +1,4 @@
-#include "LlrfMrFw.h"
+#include "KlysMrFw.h"
 
 #include <cpsw_yaml.h>
 #include <yaml-cpp/yaml.h>
@@ -27,18 +27,18 @@
 #define PI 3.14159265358979323846
 
 
-class CLlrfMrFwAdapt;
-typedef shared_ptr<CLlrfMrFwAdapt> LlrfMrFwAdapt;
+class CKlysMrFwAdapt;
+typedef shared_ptr<CKlysMrFwAdapt> KlysMrFwAdapt;
 
-class CLlrfMrFwAdapt : public ILlrfMrFw, public IEntryAdapt {
+class CKlysMrFwAdapt : public IKlysMrFw, public IEntryAdapt {
 protected:
-    Path pLlrf_;
+    Path pKlys_;
 /* put ScalVals, etc. here */
 
     ScalVal    trigMode_;
     
-    TrigPulse  trigLlrfAccel_;
-    TrigPulse  trigLlrfStandby_;
+    TrigPulse  trigKlysAccel_;
+    TrigPulse  trigKlysStandby_;
     TrigPulse  trigModAccel_;
     TrigPulse  trigModStandby_;
     TrigPulse  trigRtmDaqAccel_;
@@ -164,7 +164,7 @@ protected:
 
 
 public:
-        CLlrfMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
+        CKlysMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
 
 public:
     virtual void reset();
@@ -276,113 +276,113 @@ public:
     virtual void cmdRtmClearFault(void);
 };
 
-CLlrfMrFwAdapt::CLlrfMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
+CKlysMrFwAdapt::CKlysMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
-  pLlrf_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierMrLlrfApp") ),
+  pKlys_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierMrKlysApp") ),
   
-  trigMode_          (  IScalVal::create( pLlrf_->findByName("TimingCore/Mode") ) ),
-  trigLlrfAccel_(       ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigLlrfAccel") ) ),
-  trigLlrfStandby_(     ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigLlrfStdby") ) ),
-  trigModAccel_(        ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigRtmModAccel") ) ),
-  trigModStandby_(      ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigRtmModStdby") ) ),
-  trigRtmDaqAccel_(     ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigRtmDaqAccel") ) ),
-  trigRtmDaqStandby_(   ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigRtmDaqStdby") ) ),
-  trigSsbAccel_(        ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigRtmSsbAccel") ) ),
-  trigSsbStandby_(      ITrigPulse::create( pLlrf_->findByName("TimingCore/TrigRtmSsbStdby") ) ),
-  OutputEnable_(        IScalVal::create( pLlrf_->findByName("SysgenMR/OutputEnable") ) ),
-  CWModeEnable_(        IScalVal::create( pLlrf_->findByName("SysgenMR/CWModeEnable") ) ),
-  referenceChannel_(    IScalVal::create( pLlrf_->findByName("SysgenMR/ReferenceChannel") ) ),
-  feedbackChannel_(     IScalVal::create( pLlrf_->findByName("SysgenMR/FeedbackChannel") ) ),
-  referencePhaseSet_(   IScalVal::create( pLlrf_->findByName("SysgenMR/ReferencePhaseSet") ) ),
-  feedbackRotI_(        IScalVal::create( pLlrf_->findByName("SysgenMR/FeedbackRotI") ) ),
-  feedbackRotQ_(        IScalVal::create( pLlrf_->findByName("SysgenMR/FeedbackRotQ") ) ),
-  ICorrSoftware_(       IScalVal::create( pLlrf_->findByName("SysgenMR/ICorrSoftware") ) ),
-  QCorrSoftware_(       IScalVal::create( pLlrf_->findByName("SysgenMR/QCorrSoftware") ) ),
-  ICorrSoftwareTimeslot4_(IScalVal::create( pLlrf_->findByName("SysgenMR/ICorrSoftware_TS4") ) ),
-  QCorrSoftwareTimeslot4_(IScalVal::create( pLlrf_->findByName("SysgenMR/QCorrSoftware_TS4") ) ),
-  enableTimeslotCorrection_(IScalVal::create( pLlrf_->findByName("SysgenMR/EnableTimeslotCorrection") ) ),
-  feedforwardP_(        IScalVal::create( pLlrf_->findByName("SysgenMR/FeedforwardP") ) ),
-  feedforwardA_(        IScalVal::create( pLlrf_->findByName("SysgenMR/FeedforwardA") ) ),
-  gainP_(               IScalVal::create( pLlrf_->findByName("SysgenMR/GainP") ) ),
-  gainA_(               IScalVal::create( pLlrf_->findByName("SysgenMR/GainA") ) ),
-  feedbackCorrLimitP_(  IScalVal::create( pLlrf_->findByName("SysgenMR/FeedbackCorrLimitP") ) ),
-  feedbackCorrLimitA_(  IScalVal::create( pLlrf_->findByName("SysgenMR/FeedbackCorrLimitA") ) ),
-  integrationStart_(    IScalVal::create( pLlrf_->findByName("SysgenMR/IntegrationStart") ) ),
-  integrationEnd_(      IScalVal::create( pLlrf_->findByName("SysgenMR/IntegrationEnd") ) ),
-  applyCorrStart_(      IScalVal::create( pLlrf_->findByName("SysgenMR/ApplyCorrStart") ) ),
-  applyCorrEnd_(        IScalVal::create( pLlrf_->findByName("SysgenMR/ApplyCorrEnd") ) ),
-  dacOffset_(           IScalVal::create( pLlrf_->findByName("SysgenMR/DACOffset") ) ),
-  dacOutLimitHi_(       IScalVal::create( pLlrf_->findByName("SysgenMR/DACLimitHi") ) ),
-  dacOutLimitLow_(      IScalVal::create( pLlrf_->findByName("SysgenMR/DACLimitLow") ) ),
-  debugStream0Select_ ( IScalVal::create( pLlrf_->findByName("SysgenMR/DebugStream0Select") ) ),
-  debugStream1Select_ ( IScalVal::create( pLlrf_->findByName("SysgenMR/DebugStream1Select") ) ),
-  debugStream2Select_ ( IScalVal::create( pLlrf_->findByName("SysgenMR/DebugStream2Select") ) ),
-  debugStream3Select_ ( IScalVal::create( pLlrf_->findByName("SysgenMR/DebugStream3Select") ) ),
-  debugStream4Select_ ( IScalVal::create( pLlrf_->findByName("SysgenMR/DebugStream4Select") ) ),
-  debugStream5Select_ ( IScalVal::create( pLlrf_->findByName("SysgenMR/DebugStream5Select") ) ),
-  setpointTableI_(      IScalVal::create( pLlrf_->findByName("SysGenWaveform_I/MemoryArray") ) ),
-  setpointTableQ_(      IScalVal::create( pLlrf_->findByName("SysGenWaveform_Q/MemoryArray") ) ),
-  setpointTableNelms_(  IScalVal::create( pLlrf_->findByName("SysgenMR/SetpointTableNelms") ) ),
-  nonIQCoefCurr_(       IScalVal_RO::create( pLlrf_->findByName("SysgenMR/NonIQCoefLatch") ) ),
-  nonIQCoefOffset_(     IScalVal::create( pLlrf_->findByName("SysgenMR/NonIQCoefOffset") ) ),
-  sysgenMajorVersion_(  IScalVal_RO::create( pLlrf_->findByName("SysgenMR/MajorVersion") ) ),
-  sysgenMinorVersion_(  IScalVal_RO::create( pLlrf_->findByName("SysgenMR/MinorVersion") ) ),
+  trigMode_          (  IScalVal::create( pKlys_->findByName("TimingCore/Mode") ) ),
+  trigKlysAccel_(       ITrigPulse::create( pKlys_->findByName("TimingCore/TrigKlysAccel") ) ),
+  trigKlysStandby_(     ITrigPulse::create( pKlys_->findByName("TimingCore/TrigKlysStdby") ) ),
+  trigModAccel_(        ITrigPulse::create( pKlys_->findByName("TimingCore/TrigRtmModAccel") ) ),
+  trigModStandby_(      ITrigPulse::create( pKlys_->findByName("TimingCore/TrigRtmModStdby") ) ),
+  trigRtmDaqAccel_(     ITrigPulse::create( pKlys_->findByName("TimingCore/TrigRtmDaqAccel") ) ),
+  trigRtmDaqStandby_(   ITrigPulse::create( pKlys_->findByName("TimingCore/TrigRtmDaqStdby") ) ),
+  trigSsbAccel_(        ITrigPulse::create( pKlys_->findByName("TimingCore/TrigRtmSsbAccel") ) ),
+  trigSsbStandby_(      ITrigPulse::create( pKlys_->findByName("TimingCore/TrigRtmSsbStdby") ) ),
+  OutputEnable_(        IScalVal::create( pKlys_->findByName("SysgenMR/OutputEnable") ) ),
+  CWModeEnable_(        IScalVal::create( pKlys_->findByName("SysgenMR/CWModeEnable") ) ),
+  referenceChannel_(    IScalVal::create( pKlys_->findByName("SysgenMR/ReferenceChannel") ) ),
+  feedbackChannel_(     IScalVal::create( pKlys_->findByName("SysgenMR/FeedbackChannel") ) ),
+  referencePhaseSet_(   IScalVal::create( pKlys_->findByName("SysgenMR/ReferencePhaseSet") ) ),
+  feedbackRotI_(        IScalVal::create( pKlys_->findByName("SysgenMR/FeedbackRotI") ) ),
+  feedbackRotQ_(        IScalVal::create( pKlys_->findByName("SysgenMR/FeedbackRotQ") ) ),
+  ICorrSoftware_(       IScalVal::create( pKlys_->findByName("SysgenMR/ICorrSoftware") ) ),
+  QCorrSoftware_(       IScalVal::create( pKlys_->findByName("SysgenMR/QCorrSoftware") ) ),
+  ICorrSoftwareTimeslot4_(IScalVal::create( pKlys_->findByName("SysgenMR/ICorrSoftware_TS4") ) ),
+  QCorrSoftwareTimeslot4_(IScalVal::create( pKlys_->findByName("SysgenMR/QCorrSoftware_TS4") ) ),
+  enableTimeslotCorrection_(IScalVal::create( pKlys_->findByName("SysgenMR/EnableTimeslotCorrection") ) ),
+  feedforwardP_(        IScalVal::create( pKlys_->findByName("SysgenMR/FeedforwardP") ) ),
+  feedforwardA_(        IScalVal::create( pKlys_->findByName("SysgenMR/FeedforwardA") ) ),
+  gainP_(               IScalVal::create( pKlys_->findByName("SysgenMR/GainP") ) ),
+  gainA_(               IScalVal::create( pKlys_->findByName("SysgenMR/GainA") ) ),
+  feedbackCorrLimitP_(  IScalVal::create( pKlys_->findByName("SysgenMR/FeedbackCorrLimitP") ) ),
+  feedbackCorrLimitA_(  IScalVal::create( pKlys_->findByName("SysgenMR/FeedbackCorrLimitA") ) ),
+  integrationStart_(    IScalVal::create( pKlys_->findByName("SysgenMR/IntegrationStart") ) ),
+  integrationEnd_(      IScalVal::create( pKlys_->findByName("SysgenMR/IntegrationEnd") ) ),
+  applyCorrStart_(      IScalVal::create( pKlys_->findByName("SysgenMR/ApplyCorrStart") ) ),
+  applyCorrEnd_(        IScalVal::create( pKlys_->findByName("SysgenMR/ApplyCorrEnd") ) ),
+  dacOffset_(           IScalVal::create( pKlys_->findByName("SysgenMR/DACOffset") ) ),
+  dacOutLimitHi_(       IScalVal::create( pKlys_->findByName("SysgenMR/DACLimitHi") ) ),
+  dacOutLimitLow_(      IScalVal::create( pKlys_->findByName("SysgenMR/DACLimitLow") ) ),
+  debugStream0Select_ ( IScalVal::create( pKlys_->findByName("SysgenMR/DebugStream0Select") ) ),
+  debugStream1Select_ ( IScalVal::create( pKlys_->findByName("SysgenMR/DebugStream1Select") ) ),
+  debugStream2Select_ ( IScalVal::create( pKlys_->findByName("SysgenMR/DebugStream2Select") ) ),
+  debugStream3Select_ ( IScalVal::create( pKlys_->findByName("SysgenMR/DebugStream3Select") ) ),
+  debugStream4Select_ ( IScalVal::create( pKlys_->findByName("SysgenMR/DebugStream4Select") ) ),
+  debugStream5Select_ ( IScalVal::create( pKlys_->findByName("SysgenMR/DebugStream5Select") ) ),
+  setpointTableI_(      IScalVal::create( pKlys_->findByName("SysGenWaveform_I/MemoryArray") ) ),
+  setpointTableQ_(      IScalVal::create( pKlys_->findByName("SysGenWaveform_Q/MemoryArray") ) ),
+  setpointTableNelms_(  IScalVal::create( pKlys_->findByName("SysgenMR/SetpointTableNelms") ) ),
+  nonIQCoefCurr_(       IScalVal_RO::create( pKlys_->findByName("SysgenMR/NonIQCoefLatch") ) ),
+  nonIQCoefOffset_(     IScalVal::create( pKlys_->findByName("SysgenMR/NonIQCoefOffset") ) ),
+  sysgenMajorVersion_(  IScalVal_RO::create( pKlys_->findByName("SysgenMR/MajorVersion") ) ),
+  sysgenMinorVersion_(  IScalVal_RO::create( pKlys_->findByName("SysgenMR/MinorVersion") ) ),
   fpgaVersion_(         IScalVal_RO::create(      p->findByName("AmcCarrierMrEth/AmcCarrierCore/AxiVersion/FpgaVersion") ) ),
-  measuredTrigPeriod_(  IScalVal_RO::create( pLlrf_->findByName("SysgenMR/MeasuredTrigPeriod") ) ),
-  trigCounter_(         IScalVal_RO::create( pLlrf_->findByName("SysgenMR/TriggerCounter") ) ),
-  trigHwArm_(           IScalVal::create( pLlrf_->findByName("DaqMuxV2[1]/TriggerHwArm") ) ),
+  measuredTrigPeriod_(  IScalVal_RO::create( pKlys_->findByName("SysgenMR/MeasuredTrigPeriod") ) ),
+  trigCounter_(         IScalVal_RO::create( pKlys_->findByName("SysgenMR/TriggerCounter") ) ),
+  trigHwArm_(           IScalVal::create( pKlys_->findByName("DaqMuxV2[1]/TriggerHwArm") ) ),
   waveformInit_(        IScalVal::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/Init") ) ),
-  daqSize_(           IScalVal::create( pLlrf_->findByName("DaqMuxV2/DataBufferSize") ) ),
+  daqSize_(           IScalVal::create( pKlys_->findByName("DaqMuxV2/DataBufferSize") ) ),
   daqBufStartAddr_(           IScalVal::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/StartAddr") ) ),
   daqBufEndAddr_(           IScalVal::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/EndAddr") ) ),
 
 
 
   debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/RssiServerSw[1]/ValidCnt") ) ),
-  debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierMrLlrfApp/DaqMuxV2[0]/TrigCount") ) ),
-  debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierMrLlrfApp/DaqMuxV2[1]/TrigCount") ) ),
+  debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierMrKlysApp/DaqMuxV2[0]/TrigCount") ) ),
+  debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierMrKlysApp/DaqMuxV2[1]/TrigCount") ) ),
   
-  atten0inBay0_(         IScalVal::create( pLlrf_->findByName("AmcBay0Core/AttHMC624[0]/SetValue") ) ),
-  atten1inBay0_(         IScalVal::create( pLlrf_->findByName("AmcBay0Core/AttHMC624[1]/SetValue") ) ),
-  atten2inBay0_(         IScalVal::create( pLlrf_->findByName("AmcBay0Core/AttHMC624[2]/SetValue") ) ),
-  atten3inBay0_(         IScalVal::create( pLlrf_->findByName("AmcBay0Core/AttHMC624[3]/SetValue") ) ),
-  atten4inBay0_(         IScalVal::create( pLlrf_->findByName("AmcBay0Core/AttHMC624[4]/SetValue") ) ),
-  atten5inBay0_(         IScalVal::create( pLlrf_->findByName("AmcBay0Core/AttHMC624[5]/SetValue") ) ),
+  atten0inBay0_(         IScalVal::create( pKlys_->findByName("AmcBay0Core/AttHMC624[0]/SetValue") ) ),
+  atten1inBay0_(         IScalVal::create( pKlys_->findByName("AmcBay0Core/AttHMC624[1]/SetValue") ) ),
+  atten2inBay0_(         IScalVal::create( pKlys_->findByName("AmcBay0Core/AttHMC624[2]/SetValue") ) ),
+  atten3inBay0_(         IScalVal::create( pKlys_->findByName("AmcBay0Core/AttHMC624[3]/SetValue") ) ),
+  atten4inBay0_(         IScalVal::create( pKlys_->findByName("AmcBay0Core/AttHMC624[4]/SetValue") ) ),
+  atten5inBay0_(         IScalVal::create( pKlys_->findByName("AmcBay0Core/AttHMC624[5]/SetValue") ) ),
   
-  atten0inBay1_(         IScalVal::create( pLlrf_->findByName("AmcBay1Core/AttHMC624[0]/SetValue") ) ),
-  atten1inBay1_(         IScalVal::create( pLlrf_->findByName("AmcBay1Core/AttHMC624[1]/SetValue") ) ),
-  atten2inBay1_(         IScalVal::create( pLlrf_->findByName("AmcBay1Core/AttHMC624[2]/SetValue") ) ),
-  atten3inBay1_(         IScalVal::create( pLlrf_->findByName("AmcBay1Core/AttHMC624[3]/SetValue") ) ),
-  //atten4inBay1_(         IScalVal::create( pLlrf_->findByName("AmcBay1Core/AttHMC624[4]/SetValue") ) ),   // bay1 doesn't have 4 and 5
-  //atten5inBay1_(         IScalVal::create( pLlrf_->findByName("AmcBay1Core/AttHMC624[5]/SetValue") ) ),   // bay1 doens't have 4 and 5
+  atten0inBay1_(         IScalVal::create( pKlys_->findByName("AmcBay1Core/AttHMC624[0]/SetValue") ) ),
+  atten1inBay1_(         IScalVal::create( pKlys_->findByName("AmcBay1Core/AttHMC624[1]/SetValue") ) ),
+  atten2inBay1_(         IScalVal::create( pKlys_->findByName("AmcBay1Core/AttHMC624[2]/SetValue") ) ),
+  atten3inBay1_(         IScalVal::create( pKlys_->findByName("AmcBay1Core/AttHMC624[3]/SetValue") ) ),
+  //atten4inBay1_(         IScalVal::create( pKlys_->findByName("AmcBay1Core/AttHMC624[4]/SetValue") ) ),   // bay1 doesn't have 4 and 5
+  //atten5inBay1_(         IScalVal::create( pKlys_->findByName("AmcBay1Core/AttHMC624[5]/SetValue") ) ),   // bay1 doens't have 4 and 5
   
-  intPhaseError_(        IScalVal_RO::create(pLlrf_->findByName("SysgenMR/IntPhaseError") ) ),    // phase error between ereference and feedback channel
-  ckPhaseSet_(           IScalVal::create(pLlrf_->findByName("SysgenMR/CKPhaseSet") ) ),
+  intPhaseError_(        IScalVal_RO::create(pKlys_->findByName("SysgenMR/IntPhaseError") ) ),    // phase error between ereference and feedback channel
+  ckPhaseSet_(           IScalVal::create(pKlys_->findByName("SysgenMR/CKPhaseSet") ) ),
   
-  rtmStatus_(            IScalVal_RO::create( pLlrf_->findByName("RtmLlrfCore/Status") ) ),
-  rtmFirmwareVersion_(   IScalVal_RO::create( pLlrf_->findByName("RtmLlrfCore/FirmwareVersion") ) ),
-  rtmSystemId_(          IScalVal_RO::create( pLlrf_->findByName("RtmLlrfCore/SystemId") ) ),
-  rtmSubType_(           IScalVal_RO::create( pLlrf_->findByName("RtmLlrfCore/SubType") ) ),
-  rtmFirmwareDate_(      IScalVal_RO::create( pLlrf_->findByName("RtmLlrfCore/FirmwareDate") ) ),
-  rtmKlyWiperRegA_(      IScalVal::create(pLlrf_->findByName("RtmLlrfCore/KlyWiperRegA") ) ),
-  rtmKlyWiperRegB_(      IScalVal::create(pLlrf_->findByName("RtmLlrfCore/KlyWiperRegB") ) ),
-  rtmKlyNVRegA_(         IScalVal::create(pLlrf_->findByName("RtmLlrfCore/KlyNVRegA") ) ),
-  rtmKlyNVRegB_(         IScalVal::create(pLlrf_->findByName("RtmLlrfCore/KlyNVRegB") ) ),
-  rtmModWiperRegA_(      IScalVal::create(pLlrf_->findByName("RtmLlrfCore/ModWiperRegA") ) ),
-  rtmModWiperRegB_(      IScalVal::create(pLlrf_->findByName("RtmLlrfCore/ModWiperRegB") ) ),
-  rtmModNVRegA_(         IScalVal::create(pLlrf_->findByName("RtmLlrfCore/ModNVRegA") ) ),
-  rtmModNVRegB_(         IScalVal::create(pLlrf_->findByName("RtmLlrfCore/ModNVRegB") ) ),
-  rtmCfgRegister_(       IScalVal::create(pLlrf_->findByName("RtmLlrfCore/CfgRegister") ) ), 
-  rtmFaultOutStatus_(    IScalVal_RO::create(pLlrf_->findByName("RtmLlrfCore/FaultOut") ) ),
-  rtmAdcLockedStatus_(   IScalVal_RO::create(pLlrf_->findByName("RtmLlrfCore/AdcLocked") ) ),
-  rtmRFOffStatus_(       IScalVal_RO::create(pLlrf_->findByName("RtmLlrfCore/RfOff") ) ),
-  rtmAdcIn_(             IScalVal_RO::create(pLlrf_->findByName("RtmLlrfCore/AdcIn") ) ),
-  rtmMode_(              IScalVal::create(pLlrf_->findByName("RtmLlrfCore/Mode") ) ),
-  rtmAdcBufferBeamIV_(   IScalVal_RO::create(pLlrf_->findByName("RtmLlrfCore/RtmAdcBuffer[0]/MemoryArray") ) ),
-  rtmAdcBufferFwdRef_(   IScalVal_RO::create(pLlrf_->findByName("RtmLlrfCore/RtmAdcBuffer[1]/MemoryArray") ) ),
-  rtmRearm_Cmd_(         ICommand::create(pLlrf_->findByName("RtmLlrfCore/RearmTrigger") ) ),
-  rtmSwTrigger_Cmd_(     ICommand::create(pLlrf_->findByName("RtmLlrfCore/SwTrigger") ) ),
-  rtmClearFault_Cmd_(    ICommand::create(pLlrf_->findByName("RtmLlrfCore/ClearFault") ) )
+  rtmStatus_(            IScalVal_RO::create( pKlys_->findByName("RtmKlysCore/Status") ) ),
+  rtmFirmwareVersion_(   IScalVal_RO::create( pKlys_->findByName("RtmKlysCore/FirmwareVersion") ) ),
+  rtmSystemId_(          IScalVal_RO::create( pKlys_->findByName("RtmKlysCore/SystemId") ) ),
+  rtmSubType_(           IScalVal_RO::create( pKlys_->findByName("RtmKlysCore/SubType") ) ),
+  rtmFirmwareDate_(      IScalVal_RO::create( pKlys_->findByName("RtmKlysCore/FirmwareDate") ) ),
+  rtmKlyWiperRegA_(      IScalVal::create(pKlys_->findByName("RtmKlysCore/KlyWiperRegA") ) ),
+  rtmKlyWiperRegB_(      IScalVal::create(pKlys_->findByName("RtmKlysCore/KlyWiperRegB") ) ),
+  rtmKlyNVRegA_(         IScalVal::create(pKlys_->findByName("RtmKlysCore/KlyNVRegA") ) ),
+  rtmKlyNVRegB_(         IScalVal::create(pKlys_->findByName("RtmKlysCore/KlyNVRegB") ) ),
+  rtmModWiperRegA_(      IScalVal::create(pKlys_->findByName("RtmKlysCore/ModWiperRegA") ) ),
+  rtmModWiperRegB_(      IScalVal::create(pKlys_->findByName("RtmKlysCore/ModWiperRegB") ) ),
+  rtmModNVRegA_(         IScalVal::create(pKlys_->findByName("RtmKlysCore/ModNVRegA") ) ),
+  rtmModNVRegB_(         IScalVal::create(pKlys_->findByName("RtmKlysCore/ModNVRegB") ) ),
+  rtmCfgRegister_(       IScalVal::create(pKlys_->findByName("RtmKlysCore/CfgRegister") ) ), 
+  rtmFaultOutStatus_(    IScalVal_RO::create(pKlys_->findByName("RtmKlysCore/FaultOut") ) ),
+  rtmAdcLockedStatus_(   IScalVal_RO::create(pKlys_->findByName("RtmKlysCore/AdcLocked") ) ),
+  rtmRFOffStatus_(       IScalVal_RO::create(pKlys_->findByName("RtmKlysCore/RfOff") ) ),
+  rtmAdcIn_(             IScalVal_RO::create(pKlys_->findByName("RtmKlysCore/AdcIn") ) ),
+  rtmMode_(              IScalVal::create(pKlys_->findByName("RtmKlysCore/Mode") ) ),
+  rtmAdcBufferBeamIV_(   IScalVal_RO::create(pKlys_->findByName("RtmKlysCore/RtmAdcBuffer[0]/MemoryArray") ) ),
+  rtmAdcBufferFwdRef_(   IScalVal_RO::create(pKlys_->findByName("RtmKlysCore/RtmAdcBuffer[1]/MemoryArray") ) ),
+  rtmRearm_Cmd_(         ICommand::create(pKlys_->findByName("RtmKlysCore/RearmTrigger") ) ),
+  rtmSwTrigger_Cmd_(     ICommand::create(pKlys_->findByName("RtmKlysCore/SwTrigger") ) ),
+  rtmClearFault_Cmd_(    ICommand::create(pKlys_->findByName("RtmKlysCore/ClearFault") ) )
 
 //  stream0_(             IStream::create(      p->findByName("Stream0") ) ),
 //  stream1_(             IStream::create(      p->findByName("Stream1") ) ),
@@ -394,8 +394,8 @@ CLlrfMrFwAdapt::CLlrfMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) 
 //  stream7_(             IStream::create(      p->findByName("Stream7") ) )
 {
 
-    triggers_[ LLRF_ACCEL ] = trigLlrfAccel_;
-    triggers_[ LLRF_STDBY ] = trigLlrfStandby_;
+    triggers_[ KLYS_ACCEL ] = trigKlysAccel_;
+    triggers_[ KLYS_STDBY ] = trigKlysStandby_;
     triggers_[ MOD_ACCEL ]  = trigModAccel_;
     triggers_[ MOD_STDBY ]  = trigModStandby_;
     triggers_[ SSB_ACCEL ]  = trigSsbAccel_;
@@ -429,12 +429,12 @@ CLlrfMrFwAdapt::CLlrfMrFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) 
      
 }
 
-void CLlrfMrFwAdapt::reset()
+void CKlysMrFwAdapt::reset()
 {
 
 }
 
-void CLlrfMrFwAdapt::OutputEnable(bool enable)
+void CKlysMrFwAdapt::OutputEnable(bool enable)
 {
     try {
         OutputEnable_->setVal((uint32_t) enable);
@@ -443,7 +443,7 @@ void CLlrfMrFwAdapt::OutputEnable(bool enable)
         throw e;
     }
 }
-void CLlrfMrFwAdapt::CWOutputEnable(bool enable)
+void CKlysMrFwAdapt::CWOutputEnable(bool enable)
 {
     try {
         CWModeEnable_->setVal((uint32_t) enable);
@@ -453,7 +453,7 @@ void CLlrfMrFwAdapt::CWOutputEnable(bool enable)
     }
 }
 
-void CLlrfMrFwAdapt::setDebugStreamSelect(StreamId sid, StreamSel ssel)
+void CKlysMrFwAdapt::setDebugStreamSelect(StreamId sid, StreamSel ssel)
 {
     try {
         debugStreamSelect_[sid]->setVal(ssel);
@@ -469,7 +469,7 @@ void CLlrfMrFwAdapt::setDebugStreamSelect(StreamId sid, StreamSel ssel)
  *   freq_MHz           : EVR frequency in MHz
  */
  
-void CLlrfMrFwAdapt::setTrigMode(TrigMode mode)
+void CKlysMrFwAdapt::setTrigMode(TrigMode mode)
 {
     try {
         trigMode_->setVal( (uint32_t) mode );
@@ -479,7 +479,7 @@ void CLlrfMrFwAdapt::setTrigMode(TrigMode mode)
     }
 }
 
-void CLlrfMrFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
+void CKlysMrFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
 {
     try {
         triggers_[trig]->setTrigPolarity( (ITrigPulse::TrigPolarity) polarity );
@@ -489,7 +489,7 @@ void CLlrfMrFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
     }
 }
 
-void CLlrfMrFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq_MHz)
+void CKlysMrFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq_MHz)
 {
     try {
         triggers_[trig]->setTrigDelay( value_ns, freq_MHz );
@@ -499,7 +499,7 @@ void CLlrfMrFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq_MHz
     }
 }
 
-void CLlrfMrFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq_MHz)
+void CKlysMrFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq_MHz)
 {
     try {
         triggers_[trig]->setTrigWidth( value_ns, freq_MHz );
@@ -509,7 +509,7 @@ void CLlrfMrFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq_MHz
     }
 }
 
-void CLlrfMrFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
+void CKlysMrFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
 {
 
     try {
@@ -521,7 +521,7 @@ void CLlrfMrFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
 }
 
 
-void CLlrfMrFwAdapt::setDaqSize( uint32_t buf_size )
+void CKlysMrFwAdapt::setDaqSize( uint32_t buf_size )
 {
 	uint32_t nelms = (buf_size % 4096) ? (buf_size + 4096-(buf_size%4096)):buf_size;
 
@@ -548,7 +548,7 @@ void CLlrfMrFwAdapt::setDaqSize( uint32_t buf_size )
  *   refCh              : The channel ID of the reference signal
  *   fbkCh              : The channel ID of the feedback signal
  */ 
-void CLlrfMrFwAdapt::selectRefFbkChannel(uint32_t refCh, uint32_t fbkCh)
+void CKlysMrFwAdapt::selectRefFbkChannel(uint32_t refCh, uint32_t fbkCh)
 {
     /* writeRegister */  
     try {
@@ -566,7 +566,7 @@ void CLlrfMrFwAdapt::selectRefFbkChannel(uint32_t refCh, uint32_t fbkCh)
  * Input:
  *   phaSP_deg : phase setpoint in degree, +/- 180
  */
-void CLlrfMrFwAdapt::setRefPhaSP(double phaSP_deg)
+void CKlysMrFwAdapt::setRefPhaSP(double phaSP_deg)
 {
     int32_t pha = (int32_t)((phaSP_deg/180.0) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_PHS_FRACTION));
     try {
@@ -584,7 +584,7 @@ void CLlrfMrFwAdapt::setRefPhaSP(double phaSP_deg)
  *   scale              : Scale factor of the feedback signal (should be in the range of [-1, 1])
  *   phase_deg       : Rotation angle (radian) of the feedback siganl
  */
-void  CLlrfMrFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplitude_norm, double phase_deg)
+void  CKlysMrFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplitude_norm, double phase_deg)
 {
     int32_t cs   = (int32_t)(amplitude_norm * cos( phase_deg * PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));
     int32_t sn   = (int32_t)(amplitude_norm * sin( phase_deg * PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));    
@@ -610,7 +610,7 @@ void  CLlrfMrFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplitud
  *   scale              : Scale factor of the feedback signal (should be in the range of [-1, 1])
  *   phase_deg       : Rotation angle (radian) of the feedback siganl
  */
-void  CLlrfMrFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *amplitude_norm, double *phase_deg)
+void  CKlysMrFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *amplitude_norm, double *phase_deg)
 {    
     int32_t cs = 0;
     int32_t sn = 0;
@@ -635,7 +635,7 @@ void  CLlrfMrFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *amplitu
     }
 }
 
-void CLlrfMrFwAdapt::enableTimeslotCorrection(bool enable)
+void CKlysMrFwAdapt::enableTimeslotCorrection(bool enable)
 {
     try {
 	enableTimeslotCorrection_->setVal( (uint32_t) enable );
@@ -651,7 +651,7 @@ void CLlrfMrFwAdapt::enableTimeslotCorrection(bool enable)
  *   phase                 : Feedforwad value in degrees, +/- 180
  *   amplitude             : Feedforward value, normalized 
  */
-void  CLlrfMrFwAdapt::setFeedforward(double phase, double amplitude)
+void  CKlysMrFwAdapt::setFeedforward(double phase, double amplitude)
 {
     /* FPGA treats phase as normalized +/- 1 */
     int32_t p = (int32_t)((phase/180.0) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
@@ -672,7 +672,7 @@ void  CLlrfMrFwAdapt::setFeedforward(double phase, double amplitude)
  *   phase              : Gain value
  *   amplitude          : Gain value
  */
-void  CLlrfMrFwAdapt::setGain(double phase, double amplitude)
+void  CKlysMrFwAdapt::setGain(double phase, double amplitude)
 {
     int32_t p = (int32_t)(phase * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
     int32_t a = (int32_t)(amplitude * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
@@ -690,7 +690,7 @@ void  CLlrfMrFwAdapt::setGain(double phase, double amplitude)
 /**
  * Set the feedback correction limits
  */
-void  CLlrfMrFwAdapt::setFeedbackCorrLimits(double phase, double amplitude)
+void  CKlysMrFwAdapt::setFeedbackCorrLimits(double phase, double amplitude)
 {
     int32_t p = (int32_t)(phase * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
     int32_t a = (int32_t)(amplitude * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_GAIN_FRACTION));
@@ -710,7 +710,7 @@ void  CLlrfMrFwAdapt::setFeedbackCorrLimits(double phase, double amplitude)
  *   value_ns           : Time value in ns
  *   freq_MHz           : Sampling frequency in MHz
  */
-void  CLlrfMrFwAdapt::setIntgStart(double value_ns, double freq_MHz)
+void  CKlysMrFwAdapt::setIntgStart(double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * ( freq_MHz / 64.0 ) / 1000.0);
     /* writeRegister */ 
@@ -722,7 +722,7 @@ void  CLlrfMrFwAdapt::setIntgStart(double value_ns, double freq_MHz)
     }
 }
 
-void  CLlrfMrFwAdapt::setIntgEnd(  double value_ns, double freq_MHz)
+void  CKlysMrFwAdapt::setIntgEnd(  double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * ( freq_MHz / 64.0 ) / 1000.0);
     /* writeRegister */  
@@ -740,7 +740,7 @@ void  CLlrfMrFwAdapt::setIntgEnd(  double value_ns, double freq_MHz)
  *   value_ns           : Time value in ns
  *   freq_MHz           : Sampling frequency in MHz
  */
-void  CLlrfMrFwAdapt::setApplStart(double value_ns, double freq_MHz)
+void  CKlysMrFwAdapt::setApplStart(double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * freq_MHz / 1000.0);
     /* writeRegister */ 
@@ -752,7 +752,7 @@ void  CLlrfMrFwAdapt::setApplStart(double value_ns, double freq_MHz)
     }
 }
 
-void  CLlrfMrFwAdapt::setApplEnd(  double value_ns, double freq_MHz)
+void  CKlysMrFwAdapt::setApplEnd(  double value_ns, double freq_MHz)
 {
     uint32_t data = (uint32_t)(value_ns * freq_MHz / 1000.0);
     /* writeRegister */ 
@@ -769,7 +769,7 @@ void  CLlrfMrFwAdapt::setApplEnd(  double value_ns, double freq_MHz)
  * Input:
  *   offset             : Offset in digits
  */
-void  CLlrfMrFwAdapt::setDACOffset(int16_t offset)
+void  CKlysMrFwAdapt::setDACOffset(int16_t offset)
 {
     /* writeRegister */   
     try {
@@ -784,7 +784,7 @@ void  CLlrfMrFwAdapt::setDACOffset(int16_t offset)
  * Set the limits for DAC output signal
  *   limit              : Limit value in digits
  */
-void  CLlrfMrFwAdapt::setAmpLimit( int16_t high, int16_t low)
+void  CKlysMrFwAdapt::setAmpLimit( int16_t high, int16_t low)
 {
     /* writeRegister */   
     try {
@@ -804,7 +804,7 @@ void  CLlrfMrFwAdapt::setAmpLimit( int16_t high, int16_t low)
  *   ISPTable           : set point table for I
  *   QSPTable           : set point table for Q
  */
-void  CLlrfMrFwAdapt::setIQSPTable(uint32_t pno, double *ISPTable, double *QSPTable)
+void  CKlysMrFwAdapt::setIQSPTable(uint32_t pno, double *ISPTable, double *QSPTable)
 {
     uint32_t i;
     std::vector<int16_t> Idata( FWC_COMMON_PLATFORM_IQFB_CONST_SP_TAB_BUF_DEPTH, 0 );
@@ -831,13 +831,13 @@ void  CLlrfMrFwAdapt::setIQSPTable(uint32_t pno, double *ISPTable, double *QSPTa
 /** 
  * Set the non-IQ coefficient index offset value (will be valid only you press the apply button)
  */
-void  CLlrfMrFwAdapt::setNonIQCoefOffset(uint32_t offset)
+void  CKlysMrFwAdapt::setNonIQCoefOffset(uint32_t offset)
 {
     nonIQCoefOffset_->setVal( offset );  
 }
 
 /* Fimrware readings */
-void CLlrfMrFwAdapt::getAppFwInfo(uint32_t *firmwareName, uint32_t *majorVer, uint32_t *minorVer, uint32_t *buildNum)
+void CKlysMrFwAdapt::getAppFwInfo(uint32_t *firmwareName, uint32_t *majorVer, uint32_t *minorVer, uint32_t *buildNum)
 {
     /* read register var_version */
     sysgenMajorVersion_->getVal( majorVer );
@@ -845,22 +845,22 @@ void CLlrfMrFwAdapt::getAppFwInfo(uint32_t *firmwareName, uint32_t *majorVer, ui
     fpgaVersion_->getVal( buildNum );
 }
 
-void  CLlrfMrFwAdapt::getRaceConditionFlags(uint32_t *accFlags, uint32_t *stdbyFlags, uint32_t *spareFlags)
+void  CKlysMrFwAdapt::getRaceConditionFlags(uint32_t *accFlags, uint32_t *stdbyFlags, uint32_t *spareFlags)
 {
   
 }
 
-void CLlrfMrFwAdapt::getADCValid(bool *valid)
+void CKlysMrFwAdapt::getADCValid(bool *valid)
 {
     *valid = true;
 }
 
-void  CLlrfMrFwAdapt::getPulseCounter(uint32_t *pulseCnt)
+void  CKlysMrFwAdapt::getPulseCounter(uint32_t *pulseCnt)
 {
     trigCounter_->getVal( pulseCnt ); 
 }
 
-void  CLlrfMrFwAdapt::getMeaTrigPeriod(double *value_ms, double freq_MHz)
+void  CKlysMrFwAdapt::getMeaTrigPeriod(double *value_ms, double freq_MHz)
 {
     uint32_t u32;
     measuredTrigPeriod_->getVal( &u32 );
@@ -868,21 +868,21 @@ void  CLlrfMrFwAdapt::getMeaTrigPeriod(double *value_ms, double freq_MHz)
     *value_ms = u32 / ( freq_MHz * 1000.0 );
 }
 
-void  CLlrfMrFwAdapt::getNonIQCoefCur(uint32_t *cur)
+void  CKlysMrFwAdapt::getNonIQCoefCur(uint32_t *cur)
 {
     nonIQCoefCurr_->getVal( cur );
 }
 
 
 
-void  CLlrfMrFwAdapt::getFwStatus(uint32_t *platformStatus, uint32_t *RFCtrlStatus)
+void  CKlysMrFwAdapt::getFwStatus(uint32_t *platformStatus, uint32_t *RFCtrlStatus)
 {
   
 }
 
 
 
-void CLlrfMrFwAdapt::armDaq()
+void CKlysMrFwAdapt::armDaq()
 {
 //    waveformInit_->setVal( (uint64_t) 1 );
 //    waveformInit_->setVal( (uint64_t) 0 );
@@ -890,7 +890,7 @@ void CLlrfMrFwAdapt::armDaq()
     trigHwArm_->setVal( (uint64_t) 0 );
 }
 
-void CLlrfMrFwAdapt::initBuf(void)
+void CKlysMrFwAdapt::initBuf(void)
 {
 
     waveformInit_->setVal( (uint64_t) 1 );
@@ -899,13 +899,13 @@ void CLlrfMrFwAdapt::initBuf(void)
 }
 
 
-void CLlrfMrFwAdapt::loadConfigFromYamlFile( const char *filename, const char *yaml_dir)
+void CKlysMrFwAdapt::loadConfigFromYamlFile( const char *filename, const char *yaml_dir)
 {
     YAML::Node config( CYamlFieldFactoryBase::loadPreprocessedYamlFile( filename, yaml_dir ) );
     p_->loadConfigFromYaml( config );
 }
 
-void CLlrfMrFwAdapt::dumpConfigToYamlFile( const char *filename, const char *yaml_dir)
+void CKlysMrFwAdapt::dumpConfigToYamlFile( const char *filename, const char *yaml_dir)
 {
     YAML::Node config;
     p_->dumpConfigToYaml( config );
@@ -918,17 +918,17 @@ void CLlrfMrFwAdapt::dumpConfigToYamlFile( const char *filename, const char *yam
 }
 
 
-LlrfMrFw ILlrfMrFw::create(Path p)
+KlysMrFw IKlysMrFw::create(Path p)
 {
-    //LlrfMrFwAdapt rval = IEntryAdapt::check_interface<LlrfMrFwAdapt, Entry>(p);
+    //KlysMrFwAdapt rval = IEntryAdapt::check_interface<KlysMrFwAdapt, Entry>(p);
     //return rval;
-    return IEntryAdapt::check_interface<LlrfMrFwAdapt, DevImpl>( p );
+    return IEntryAdapt::check_interface<KlysMrFwAdapt, DevImpl>( p );
 }
 
 
 //
 
-void CLlrfMrFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
+void CKlysMrFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
 {
     try {
         debugPacketCnt_->getVal(dbgCnt);
@@ -938,7 +938,7 @@ void CLlrfMrFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
     }
 }
 
-void CLlrfMrFwAdapt::getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1)
+void CKlysMrFwAdapt::getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1)
 {
     try{
       debugTrgCnt0_->getVal(dbgCnt0);
@@ -950,7 +950,7 @@ void CLlrfMrFwAdapt::getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1)
 }
 
 
-void CLlrfMrFwAdapt::setAtten(uint32_t att, int bay, int chn)
+void CKlysMrFwAdapt::setAtten(uint32_t att, int bay, int chn)
 {
     int index = bay*6 + chn;
     if(index >= 10) return; // bay1 chn 4 and chn 5 are not available.
@@ -962,7 +962,7 @@ void CLlrfMrFwAdapt::setAtten(uint32_t att, int bay, int chn)
     }
 }
 
-void CLlrfMrFwAdapt::setAtten(uint32_t att, int index)
+void CKlysMrFwAdapt::setAtten(uint32_t att, int index)
 {
     if(index > 9) return;  // bay1 chn 4 and chn5 are not available.
     try {
@@ -974,7 +974,7 @@ void CLlrfMrFwAdapt::setAtten(uint32_t att, int index)
 
 }
 
-void CLlrfMrFwAdapt::getIntPhaseError(int32_t *phase)
+void CKlysMrFwAdapt::getIntPhaseError(int32_t *phase)
 {
     try {
         intPhaseError_->getVal((uint32_t*)phase);
@@ -984,7 +984,7 @@ void CLlrfMrFwAdapt::getIntPhaseError(int32_t *phase)
     }
 }
 
-void CLlrfMrFwAdapt::setCKPhase(uint32_t ckPhase)
+void CKlysMrFwAdapt::setCKPhase(uint32_t ckPhase)
 {
     try {
         ckPhaseSet_->setVal(ckPhase);
@@ -995,7 +995,7 @@ void CLlrfMrFwAdapt::setCKPhase(uint32_t ckPhase)
 } 
 
 
-void CLlrfMrFwAdapt::getRtmStatus(uint32_t *rtmStatus)
+void CKlysMrFwAdapt::getRtmStatus(uint32_t *rtmStatus)
 {
     try {
         rtmStatus_->getVal(rtmStatus);
@@ -1006,7 +1006,7 @@ void CLlrfMrFwAdapt::getRtmStatus(uint32_t *rtmStatus)
 }
 
 
-void CLlrfMrFwAdapt::getRtmFirmwareVersion(uint32_t *rtmFirmwareVersion)
+void CKlysMrFwAdapt::getRtmFirmwareVersion(uint32_t *rtmFirmwareVersion)
 {
     try {
         rtmFirmwareVersion_->getVal(rtmFirmwareVersion);
@@ -1017,7 +1017,7 @@ void CLlrfMrFwAdapt::getRtmFirmwareVersion(uint32_t *rtmFirmwareVersion)
 }
 
 
-void CLlrfMrFwAdapt::getRtmSystemId(char *systemIdString)
+void CKlysMrFwAdapt::getRtmSystemId(char *systemIdString)
 {
     uint16_t id[4];
     char *c;
@@ -1042,7 +1042,7 @@ void CLlrfMrFwAdapt::getRtmSystemId(char *systemIdString)
 }
 
 
-void CLlrfMrFwAdapt::getRtmSubType(char *subTypeString)
+void CKlysMrFwAdapt::getRtmSubType(char *subTypeString)
 {
     uint16_t stype[4];
     char *c;
@@ -1065,7 +1065,7 @@ void CLlrfMrFwAdapt::getRtmSubType(char *subTypeString)
 }
 
 
-void CLlrfMrFwAdapt::getRtmFirmwareDate(char *firmwareDateString)
+void CKlysMrFwAdapt::getRtmFirmwareDate(char *firmwareDateString)
 {
     uint16_t sdate[4];
     char *c;
@@ -1089,7 +1089,7 @@ void CLlrfMrFwAdapt::getRtmFirmwareDate(char *firmwareDateString)
 
 }
 
-void CLlrfMrFwAdapt::setRtmKlyWiperRegA(uint32_t reg)
+void CKlysMrFwAdapt::setRtmKlyWiperRegA(uint32_t reg)
 {
     try {
         rtmKlyWiperRegA_->setVal(reg);
@@ -1099,7 +1099,7 @@ void CLlrfMrFwAdapt::setRtmKlyWiperRegA(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmKlyWiperRegB(uint32_t reg)
+void CKlysMrFwAdapt::setRtmKlyWiperRegB(uint32_t reg)
 {
     try {
         rtmKlyWiperRegB_->setVal(reg);
@@ -1109,7 +1109,7 @@ void CLlrfMrFwAdapt::setRtmKlyWiperRegB(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmKlyNVRegA(uint32_t reg)
+void CKlysMrFwAdapt::setRtmKlyNVRegA(uint32_t reg)
 {
 
     try {
@@ -1120,7 +1120,7 @@ void CLlrfMrFwAdapt::setRtmKlyNVRegA(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmKlyNVRegB(uint32_t reg)
+void CKlysMrFwAdapt::setRtmKlyNVRegB(uint32_t reg)
 {
     try {
         rtmKlyNVRegB_->setVal(reg);
@@ -1130,7 +1130,7 @@ void CLlrfMrFwAdapt::setRtmKlyNVRegB(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmModWiperRegA(uint32_t reg)
+void CKlysMrFwAdapt::setRtmModWiperRegA(uint32_t reg)
 {
     try {
         rtmModWiperRegA_->setVal(reg);
@@ -1140,7 +1140,7 @@ void CLlrfMrFwAdapt::setRtmModWiperRegA(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmModWiperRegB(uint32_t reg)
+void CKlysMrFwAdapt::setRtmModWiperRegB(uint32_t reg)
 {
     try {
         rtmModWiperRegB_->setVal(reg);
@@ -1150,7 +1150,7 @@ void CLlrfMrFwAdapt::setRtmModWiperRegB(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmModNVRegA(uint32_t reg)
+void CKlysMrFwAdapt::setRtmModNVRegA(uint32_t reg)
 {
     try {
         rtmModNVRegA_->setVal(reg);
@@ -1160,7 +1160,7 @@ void CLlrfMrFwAdapt::setRtmModNVRegA(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmModNVRegB(uint32_t reg)
+void CKlysMrFwAdapt::setRtmModNVRegB(uint32_t reg)
 {
     try {
         rtmModNVRegB_->setVal(reg);
@@ -1170,7 +1170,7 @@ void CLlrfMrFwAdapt::setRtmModNVRegB(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::setRtmCfgRegister(uint32_t reg)
+void CKlysMrFwAdapt::setRtmCfgRegister(uint32_t reg)
 {
     try {
         rtmCfgRegister_->setVal(reg);
@@ -1180,7 +1180,7 @@ void CLlrfMrFwAdapt::setRtmCfgRegister(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::getRtmFaultOutStatus(uint32_t *rtmFaultOutStatus)
+void CKlysMrFwAdapt::getRtmFaultOutStatus(uint32_t *rtmFaultOutStatus)
 {
     try {
         rtmFaultOutStatus_->getVal(rtmFaultOutStatus);
@@ -1190,7 +1190,7 @@ void CLlrfMrFwAdapt::getRtmFaultOutStatus(uint32_t *rtmFaultOutStatus)
     }
 }
 
-void CLlrfMrFwAdapt::getRtmAdcLockedStatus(uint32_t *rtmAdcLockedStatus)
+void CKlysMrFwAdapt::getRtmAdcLockedStatus(uint32_t *rtmAdcLockedStatus)
 {    
     try {
         rtmAdcLockedStatus_->getVal(rtmAdcLockedStatus);
@@ -1200,7 +1200,7 @@ void CLlrfMrFwAdapt::getRtmAdcLockedStatus(uint32_t *rtmAdcLockedStatus)
     }
 }
 
-void CLlrfMrFwAdapt::getRtmRFOffStatus(uint32_t *rtmRFOffStatus)
+void CKlysMrFwAdapt::getRtmRFOffStatus(uint32_t *rtmRFOffStatus)
 {
     try {
         rtmRFOffStatus_->getVal(rtmRFOffStatus);
@@ -1210,7 +1210,7 @@ void CLlrfMrFwAdapt::getRtmRFOffStatus(uint32_t *rtmRFOffStatus)
     }
 }
 
-void CLlrfMrFwAdapt::getRtmAdcIn(uint32_t v[])
+void CKlysMrFwAdapt::getRtmAdcIn(uint32_t v[])
 {
     try {
         rtmAdcIn_->getVal(v,4);
@@ -1220,7 +1220,7 @@ void CLlrfMrFwAdapt::getRtmAdcIn(uint32_t v[])
     }
 }
 
-void CLlrfMrFwAdapt::setRtmMode(uint32_t reg)
+void CKlysMrFwAdapt::setRtmMode(uint32_t reg)
 {
     try {
         rtmMode_->setVal(reg);
@@ -1230,7 +1230,7 @@ void CLlrfMrFwAdapt::setRtmMode(uint32_t reg)
     }
 }
 
-void CLlrfMrFwAdapt::getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[])
+void CKlysMrFwAdapt::getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[])
 {
     try {
         rtmAdcBufferBeamIV_->getVal(v, (unsigned) 0x200);
@@ -1240,7 +1240,7 @@ void CLlrfMrFwAdapt::getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[])
     }
 }
 
-void CLlrfMrFwAdapt::getRtmFastAdcBufferForwardReflect(uint32_t v[])
+void CKlysMrFwAdapt::getRtmFastAdcBufferForwardReflect(uint32_t v[])
 {
     try {
         rtmAdcBufferFwdRef_->getVal(v, (unsigned) 0x200);
@@ -1250,7 +1250,7 @@ void CLlrfMrFwAdapt::getRtmFastAdcBufferForwardReflect(uint32_t v[])
     }
 }
 
-void CLlrfMrFwAdapt::cmdRtmRearm(void)
+void CKlysMrFwAdapt::cmdRtmRearm(void)
 {
     try {
         rtmRearm_Cmd_->execute();
@@ -1260,7 +1260,7 @@ void CLlrfMrFwAdapt::cmdRtmRearm(void)
     }
 }
 
-void CLlrfMrFwAdapt::cmdRtmSwTrigger(void)
+void CKlysMrFwAdapt::cmdRtmSwTrigger(void)
 {
     try {
         rtmSwTrigger_Cmd_->execute();
@@ -1270,7 +1270,7 @@ void CLlrfMrFwAdapt::cmdRtmSwTrigger(void)
     }
 }
 
-void CLlrfMrFwAdapt::cmdRtmClearFault(void)
+void CKlysMrFwAdapt::cmdRtmClearFault(void)
 {
     try {
         rtmClearFault_Cmd_->execute();

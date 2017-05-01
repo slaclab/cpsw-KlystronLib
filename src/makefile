@@ -5,17 +5,17 @@ SRCDIR=.
 
 include $(CPSW_DIR)/defs.mak
 
-HEADERS += LlrfMrFw.h
+HEADERS += KlysMrFw.h
 
-llrfLib_SRCS  = TrigPulse.cc LlrfMrFw.cc
-llrfLib_LIBS  = yaml-cpp $(CPSW_LIBS)
+klysLib_SRCS  = TrigPulse.cc KlysMrFw.cc
+klysLib_LIBS  = yaml-cpp $(CPSW_LIBS)
 
-SHARED_LIBRARIES_YES+=llrfLib
-STATIC_LIBRARIES_YES+=llrfLib
+SHARED_LIBRARIES_YES+=klysLib
+STATIC_LIBRARIES_YES+=klysLib
 
-llrf_tst_SRCS =  LlrfMrFw_tst.cc
-llrf_tst_LIBS = llrfLib.a cpsw.a yaml-cpp.a boost_system.a pthread dl rt
+klys_tst_SRCS =  KlysMrFw_tst.cc
+klys_tst_LIBS = klysLib.a cpsw.a yaml-cpp.a boost_system.a pthread dl rt
 
-PROGRAMS=llrf_tst
+PROGRAMS=klys_tst
 
 include $(CPSW_DIR)/rules.mak
