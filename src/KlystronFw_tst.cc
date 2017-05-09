@@ -64,9 +64,9 @@ try {
 	uint32_t delay_ns = 10000;
 	uint32_t width_ns = 40000;
 
-	fw->setTrigDelay(  IKlystronFw::KLYSTRON_ACCEL, delay_ns );
-	fw->setTrigWidth(  IKlystronFw::KLYSTRON_ACCEL, width_ns );
-	fw->setTrigOpCode( IKlystronFw::KLYSTRON_ACCEL, opCode );
+	fw->setTrigDelay(  IKlystronFw::LLRF_ACCEL, delay_ns );
+	fw->setTrigWidth(  IKlystronFw::LLRF_ACCEL, width_ns );
+	fw->setTrigOpCode( IKlystronFw::LLRF_ACCEL, opCode );
 	
 /* setup IQ table */
 

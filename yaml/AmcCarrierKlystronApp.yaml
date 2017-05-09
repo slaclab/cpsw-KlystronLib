@@ -89,21 +89,21 @@ AmcCarrierKlystronApp: &AmcCarrierKlystronApp
       at:
         offset: 0x04000000     
    ##################################################
-    TrigKlystronAccel:
+    TrigLlrfAccel:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
         offset: 0x05000000 
       description: "sysgen trigPulse0"
    ##################################################
-    TrigKlystronSpare:
+    TrigLlrfSpare:
       configPrio: 3
       <<: *TimingTrigPulse
       at:
         offset: 0x05001000 
       description: "sysgen trigPulse1"
    ##################################################
-    TrigKlystronDaq:
+    TrigLlrfDaq:
       configPrio: 3
       <<: *TimingTrigPulse
       at:

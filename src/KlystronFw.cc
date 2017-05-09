@@ -37,8 +37,8 @@ protected:
 
     ScalVal    trigMode_;
     
-    TrigPulse  trigKlystronAccel_;
-    TrigPulse  trigKlystronStandby_;
+    TrigPulse  trigLlrfAccel_;
+    TrigPulse  trigLlrfStandby_;
     TrigPulse  trigModAccel_;
     TrigPulse  trigModStandby_;
     TrigPulse  trigRtmDaqAccel_;
@@ -281,8 +281,8 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   pKlystron_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp") ),
   
   trigMode_          (  IScalVal::create( pKlystron_->findByName("TimingCore/Mode") ) ),
-  trigKlystronAccel_(       ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigKlystronAccel") ) ),
-  trigKlystronStandby_(     ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigKlystronStdby") ) ),
+  trigLlrfAccel_(       ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigLlrfAccel") ) ),
+  trigLlrfStandby_(     ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigLlrfStdby") ) ),
   trigModAccel_(        ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmModAccel") ) ),
   trigModStandby_(      ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmModStdby") ) ),
   trigRtmDaqAccel_(     ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmDaqAccel") ) ),
@@ -394,8 +394,8 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
 //  stream7_(             IStream::create(      p->findByName("Stream7") ) )
 {
 
-    triggers_[ KLYSTRON_ACCEL ] = trigKlystronAccel_;
-    triggers_[ KLYSTRON_STDBY ] = trigKlystronStandby_;
+    triggers_[ LLRF_ACCEL ] = trigLlrfAccel_;
+    triggers_[ LLRF_STDBY ] = trigLlrfStandby_;
     triggers_[ MOD_ACCEL ]  = trigModAccel_;
     triggers_[ MOD_STDBY ]  = trigModStandby_;
     triggers_[ SSB_ACCEL ]  = trigSsbAccel_;
