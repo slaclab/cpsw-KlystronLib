@@ -1,3 +1,7 @@
+timing         08-09-2017     Kukhee Kim
+               - brach out to timing branch to work for LCLS1 mode timing for HPS system
+
+
 R1.2.1         05-08-2017     Thomas Kurty (tkurty)
                - Revert incorrectly named Klystron variables back to Llrf
 
