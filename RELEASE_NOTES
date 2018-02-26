@@ -1,3 +1,8 @@
+R1.2.2         02-26-2018     Thomas Kurty (tkurty)
+               - Update AppTop and AppCore register names from new firmware (2018-01 and later)
+               - Add Software Trigger register for debugging
+               - Remove outdated yaml files (not used by this package)
+
 R1.2.1         05-08-2017     Thomas Kurty (tkurty)
                - Revert incorrectly named Klystron variables back to Llrf
 

@@ -1,4 +1,4 @@
-CPSW_DIR=/afs/slac/g/lcls/package/cpsw/framework/R3.5.3/src
+CPSW_DIR=/afs/slac/g/lcls/package/cpsw/framework/R3.5.4/src
 
 SRCDIR=.
 -include $(SRCDIR)/release.mak

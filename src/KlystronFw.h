@@ -86,6 +86,7 @@ public:
     virtual void armDaq()      = 0;  /* rearm the DAQ (and async messages) */
     virtual void initBuf(void) = 0;
 
+    virtual void TriggerSw(bool enable)   = 0;
 
     virtual void loadConfigFromYamlFile( const char *filename, const char *yaml_dir = 0 ) = 0;
     virtual void dumpConfigToYamlFile(   const char *filename, const char *yaml_dir = 0 ) = 0;

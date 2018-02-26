@@ -93,6 +93,9 @@ protected:
     ScalVal    daqBufStartAddr_;
     ScalVal    daqBufEndAddr_;
 
+    ScalVal    TriggerHw_;
+    ScalVal    TriggerSw0_;
+    ScalVal    TriggerSw1_;
 
     ScalVal_RO debugPacketCnt_;
     ScalVal_RO debugTrgCnt0_;
@@ -236,6 +239,7 @@ public:
     virtual void loadConfigFromYamlFile( const char *filename, const char *yaml_dir = 0 );
     virtual void dumpConfigToYamlFile(   const char *filename, const char *yaml_dir = 0 );
 
+    virtual void TriggerSw(bool enable);
 
     virtual void getDebugPacketCnt(uint32_t *dbgCnt);
     virtual void getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1);
@@ -278,17 +282,17 @@ public:
 
 CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
-  pKlystron_(                                      p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp") ),
+  pKlystron_(                                      p->findByName("AppTop/AppCore") ),
   
-  trigMode_          (  IScalVal::create( pKlystron_->findByName("TimingCore/Mode") ) ),
-  trigLlrfAccel_(       ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigLlrfAccel") ) ),
-  trigLlrfStandby_(     ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigLlrfStdby") ) ),
-  trigModAccel_(        ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmModAccel") ) ),
-  trigModStandby_(      ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmModStdby") ) ),
-  trigRtmDaqAccel_(     ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmDaqAccel") ) ),
-  trigRtmDaqStandby_(   ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmDaqStdby") ) ),
-  trigSsbAccel_(        ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmSsbAccel") ) ),
-  trigSsbStandby_(      ITrigPulse::create( pKlystron_->findByName("TimingCore/TrigRtmSsbStdby") ) ),
+  trigMode_          (  IScalVal::create( pKlystron_->findByName("SysgenMR/TimingMode") ) ),
+  trigLlrfAccel_(       ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[0]") ) ),
+  trigLlrfStandby_(     ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[1]") ) ),
+  trigModAccel_(        ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[2]") ) ),
+  trigModStandby_(      ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[3]") ) ),
+  trigRtmDaqAccel_(     ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[4]") ) ),
+  trigRtmDaqStandby_(   ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[5]") ) ),
+  trigSsbAccel_(        ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[6]") ) ),
+  trigSsbStandby_(      ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[7]") ) ),
   OutputEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/OutputEnable") ) ),
   CWModeEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/CWModeEnable") ) ),
   referenceChannel_(    IScalVal::create( pKlystron_->findByName("SysgenMR/ReferenceChannel") ) ),
@@ -327,62 +331,64 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   nonIQCoefOffset_(     IScalVal::create( pKlystron_->findByName("SysgenMR/NonIQCoefOffset") ) ),
   sysgenMajorVersion_(  IScalVal_RO::create( pKlystron_->findByName("SysgenMR/MajorVersion") ) ),
   sysgenMinorVersion_(  IScalVal_RO::create( pKlystron_->findByName("SysgenMR/MinorVersion") ) ),
-  fpgaVersion_(         IScalVal_RO::create(      p->findByName("AmcCarrierMrEth/AmcCarrierCore/AxiVersion/FpgaVersion") ) ),
+  fpgaVersion_(         IScalVal_RO::create(      p->findByName("AmcCarrierCore/AxiVersion/FpgaVersion") ) ),
   measuredTrigPeriod_(  IScalVal_RO::create( pKlystron_->findByName("SysgenMR/MeasuredTrigPeriod") ) ),
   trigCounter_(         IScalVal_RO::create( pKlystron_->findByName("SysgenMR/TriggerCounter") ) ),
-  trigHwArm_(           IScalVal::create( pKlystron_->findByName("DaqMuxV2[1]/TriggerHwArm") ) ),
-  waveformInit_(        IScalVal::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/Init") ) ),
-  daqSize_(           IScalVal::create( pKlystron_->findByName("DaqMuxV2/DataBufferSize") ) ),
-  daqBufStartAddr_(           IScalVal::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/StartAddr") ) ),
-  daqBufEndAddr_(           IScalVal::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/EndAddr") ) ),
+  trigHwArm_(           IScalVal::create( p->findByName("AppTop/DaqMuxV2[1]/TriggerHwArm") ) ),
+  waveformInit_(        IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/Init") ) ),
+  daqSize_(           IScalVal::create( p->findByName("AppTop/DaqMuxV2/DataBufferSize") ) ),
+  daqBufStartAddr_(           IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/StartAddr") ) ),
+  daqBufEndAddr_(           IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/EndAddr") ) ),
 
+  TriggerHw_(           IScalVal::create( pKlystron_->findByName("SysgenMR/hwTrig") ) ),
+  TriggerSw0_(            IScalVal::create( p->findByName("AppTop/DaqMuxV2[0]/TriggerSw") ) ),
+  TriggerSw1_(            IScalVal::create( p->findByName("AppTop/DaqMuxV2[1]/TriggerSw") ) ),
 
-
-  debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierCore/RssiServerSw[1]/ValidCnt") ) ),
-  debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp/DaqMuxV2[0]/TrigCount") ) ),
-  debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AmcCarrierMrEth/AmcCarrierKlystronApp/DaqMuxV2[1]/TrigCount") ) ),
+  debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierCore/SwRssiServer[1]/ValidCnt") ) ),
+  debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AppTop/DaqMuxV2[0]/TrigCount") ) ),
+  debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AppTop/DaqMuxV2[1]/TrigCount") ) ),
   
-  atten0inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[0]/SetValue") ) ),
-  atten1inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[1]/SetValue") ) ),
-  atten2inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[2]/SetValue") ) ),
-  atten3inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[3]/SetValue") ) ),
-  atten4inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[4]/SetValue") ) ),
-  atten5inBay0_(         IScalVal::create( pKlystron_->findByName("AmcBay0Core/AttHMC624[5]/SetValue") ) ),
+  atten0inBay0_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfDownConvert/AttHMC624[0]/SetValue") ) ),
+  atten1inBay0_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfDownConvert/AttHMC624[1]/SetValue") ) ),
+  atten2inBay0_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfDownConvert/AttHMC624[2]/SetValue") ) ),
+  atten3inBay0_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfDownConvert/AttHMC624[3]/SetValue") ) ),
+  atten4inBay0_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfDownConvert/AttHMC624[4]/SetValue") ) ),
+  atten5inBay0_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfDownConvert/AttHMC624[5]/SetValue") ) ),
   
-  atten0inBay1_(         IScalVal::create( pKlystron_->findByName("AmcBay1Core/AttHMC624[0]/SetValue") ) ),
-  atten1inBay1_(         IScalVal::create( pKlystron_->findByName("AmcBay1Core/AttHMC624[1]/SetValue") ) ),
-  atten2inBay1_(         IScalVal::create( pKlystron_->findByName("AmcBay1Core/AttHMC624[2]/SetValue") ) ),
-  atten3inBay1_(         IScalVal::create( pKlystron_->findByName("AmcBay1Core/AttHMC624[3]/SetValue") ) ),
-  //atten4inBay1_(         IScalVal::create( pKlystron_->findByName("AmcBay1Core/AttHMC624[4]/SetValue") ) ),   // bay1 doesn't have 4 and 5
-  //atten5inBay1_(         IScalVal::create( pKlystron_->findByName("AmcBay1Core/AttHMC624[5]/SetValue") ) ),   // bay1 doens't have 4 and 5
+  atten0inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[0]/SetValue") ) ),
+  atten1inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[1]/SetValue") ) ),
+  atten2inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[2]/SetValue") ) ),
+  atten3inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[3]/SetValue") ) ),
+  //atten4inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[4]/SetValue") ) ),   // bay1 doesn't have 4 and 5
+  //atten5inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[5]/SetValue") ) ),   // bay1 doens't have 4 and 5
   
   intPhaseError_(        IScalVal_RO::create(pKlystron_->findByName("SysgenMR/IntPhaseError") ) ),    // phase error between ereference and feedback channel
   ckPhaseSet_(           IScalVal::create(pKlystron_->findByName("SysgenMR/CKPhaseSet") ) ),
   
-  rtmStatus_(            IScalVal_RO::create( pKlystron_->findByName("RtmKlystronCore/Status") ) ),
-  rtmFirmwareVersion_(   IScalVal_RO::create( pKlystron_->findByName("RtmKlystronCore/FirmwareVersion") ) ),
-  rtmSystemId_(          IScalVal_RO::create( pKlystron_->findByName("RtmKlystronCore/SystemId") ) ),
-  rtmSubType_(           IScalVal_RO::create( pKlystron_->findByName("RtmKlystronCore/SubType") ) ),
-  rtmFirmwareDate_(      IScalVal_RO::create( pKlystron_->findByName("RtmKlystronCore/FirmwareDate") ) ),
-  rtmKlyWiperRegA_(      IScalVal::create(pKlystron_->findByName("RtmKlystronCore/KlyWiperRegA") ) ),
-  rtmKlyWiperRegB_(      IScalVal::create(pKlystron_->findByName("RtmKlystronCore/KlyWiperRegB") ) ),
-  rtmKlyNVRegA_(         IScalVal::create(pKlystron_->findByName("RtmKlystronCore/KlyNVRegA") ) ),
-  rtmKlyNVRegB_(         IScalVal::create(pKlystron_->findByName("RtmKlystronCore/KlyNVRegB") ) ),
-  rtmModWiperRegA_(      IScalVal::create(pKlystron_->findByName("RtmKlystronCore/ModWiperRegA") ) ),
-  rtmModWiperRegB_(      IScalVal::create(pKlystron_->findByName("RtmKlystronCore/ModWiperRegB") ) ),
-  rtmModNVRegA_(         IScalVal::create(pKlystron_->findByName("RtmKlystronCore/ModNVRegA") ) ),
-  rtmModNVRegB_(         IScalVal::create(pKlystron_->findByName("RtmKlystronCore/ModNVRegB") ) ),
-  rtmCfgRegister_(       IScalVal::create(pKlystron_->findByName("RtmKlystronCore/CfgRegister") ) ), 
-  rtmFaultOutStatus_(    IScalVal_RO::create(pKlystron_->findByName("RtmKlystronCore/FaultOut") ) ),
-  rtmAdcLockedStatus_(   IScalVal_RO::create(pKlystron_->findByName("RtmKlystronCore/AdcLocked") ) ),
-  rtmRFOffStatus_(       IScalVal_RO::create(pKlystron_->findByName("RtmKlystronCore/RfOff") ) ),
-  rtmAdcIn_(             IScalVal_RO::create(pKlystron_->findByName("RtmKlystronCore/AdcIn") ) ),
-  rtmMode_(              IScalVal::create(pKlystron_->findByName("RtmKlystronCore/Mode") ) ),
-  rtmAdcBufferBeamIV_(   IScalVal_RO::create(pKlystron_->findByName("RtmKlystronCore/RtmAdcBuffer[0]/MemoryArray") ) ),
-  rtmAdcBufferFwdRef_(   IScalVal_RO::create(pKlystron_->findByName("RtmKlystronCore/RtmAdcBuffer[1]/MemoryArray") ) ),
-  rtmRearm_Cmd_(         ICommand::create(pKlystron_->findByName("RtmKlystronCore/RearmTrigger") ) ),
-  rtmSwTrigger_Cmd_(     ICommand::create(pKlystron_->findByName("RtmKlystronCore/SwTrigger") ) ),
-  rtmClearFault_Cmd_(    ICommand::create(pKlystron_->findByName("RtmKlystronCore/ClearFault") ) )
+  rtmStatus_(            IScalVal_RO::create( pKlystron_->findByName("RtmRfInterlock/Status") ) ),
+  rtmFirmwareVersion_(   IScalVal_RO::create( pKlystron_->findByName("RtmRfInterlock/FirmwareVersion") ) ),
+  rtmSystemId_(          IScalVal_RO::create( pKlystron_->findByName("RtmRfInterlock/SystemId") ) ),
+  rtmSubType_(           IScalVal_RO::create( pKlystron_->findByName("RtmRfInterlock/SubType") ) ),
+  rtmFirmwareDate_(      IScalVal_RO::create( pKlystron_->findByName("RtmRfInterlock/FirmwareDate") ) ),
+  rtmKlyWiperRegA_(      IScalVal::create(pKlystron_->findByName("RtmRfInterlock/KlyWiperRegA") ) ),
+  rtmKlyWiperRegB_(      IScalVal::create(pKlystron_->findByName("RtmRfInterlock/KlyWiperRegB") ) ),
+  rtmKlyNVRegA_(         IScalVal::create(pKlystron_->findByName("RtmRfInterlock/KlyNVRegA") ) ),
+  rtmKlyNVRegB_(         IScalVal::create(pKlystron_->findByName("RtmRfInterlock/KlyNVRegB") ) ),
+  rtmModWiperRegA_(      IScalVal::create(pKlystron_->findByName("RtmRfInterlock/ModWiperRegA") ) ),
+  rtmModWiperRegB_(      IScalVal::create(pKlystron_->findByName("RtmRfInterlock/ModWiperRegB") ) ),
+  rtmModNVRegA_(         IScalVal::create(pKlystron_->findByName("RtmRfInterlock/ModNVRegA") ) ),
+  rtmModNVRegB_(         IScalVal::create(pKlystron_->findByName("RtmRfInterlock/ModNVRegB") ) ),
+  rtmCfgRegister_(       IScalVal::create(pKlystron_->findByName("RtmRfInterlock/CfgRegister") ) ),
+  rtmFaultOutStatus_(    IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/FaultOut") ) ),
+  rtmAdcLockedStatus_(   IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/AdcLocked") ) ),
+  rtmRFOffStatus_(       IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/RfOff") ) ),
+  rtmAdcIn_(             IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/AdcIn") ) ),
+  rtmMode_(              IScalVal::create(pKlystron_->findByName("RtmRfInterlock/Mode") ) ),
+  rtmAdcBufferBeamIV_(   IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/RtmAdcBuffer[0]/MemoryArray") ) ),
+  rtmAdcBufferFwdRef_(   IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/RtmAdcBuffer[1]/MemoryArray") ) ),
+  rtmRearm_Cmd_(         ICommand::create(pKlystron_->findByName("RtmRfInterlock/RearmTrigger") ) ),
+  rtmSwTrigger_Cmd_(     ICommand::create(pKlystron_->findByName("RtmRfInterlock/SwTrigger") ) ),
+  rtmClearFault_Cmd_(    ICommand::create(pKlystron_->findByName("RtmRfInterlock/ClearFault") ) )
 
 //  stream0_(             IStream::create(      p->findByName("Stream0") ) ),
 //  stream1_(             IStream::create(      p->findByName("Stream1") ) ),
@@ -925,6 +931,13 @@ KlystronFw IKlystronFw::create(Path p)
     return IEntryAdapt::check_interface<KlystronFwAdapt, DevImpl>( p );
 }
 
+
+void CKlystronFwAdapt::TriggerSw(bool enable)
+{
+    //TriggerSw0_->setVal( (uint64_t) enable);
+    //TriggerSw1_->setVal( (uint64_t) enable);
+    TriggerHw_->setVal( (uint64_t) enable);
+}
 
 //
 
