@@ -86,8 +86,6 @@ public:
     virtual void armDaq()      = 0;  /* rearm the DAQ (and async messages) */
     virtual void initBuf(void) = 0;
 
-    virtual void TriggerSw(bool enable)   = 0;
-
     virtual void loadConfigFromYamlFile( const char *filename, const char *yaml_dir = 0 ) = 0;
     virtual void dumpConfigToYamlFile(   const char *filename, const char *yaml_dir = 0 ) = 0;
 //
@@ -95,6 +93,8 @@ public:
     virtual void getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1) = 0;
     virtual void setAtten(uint32_t att, int bay, int chn) = 0;
     virtual void setAtten(uint32_t att, int index) = 0;
+    virtual void getTemp(int bay, int sensor, double *temp) = 0;
+    virtual void getTemp(int index, double *temp) = 0;
     virtual void getIntPhaseError(int32_t *phase) = 0;
     virtual void setCKPhase(uint32_t ckPhase) = 0;
 

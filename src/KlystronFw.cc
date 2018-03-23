@@ -37,15 +37,6 @@ protected:
 
     ScalVal    trigMode_;
     
-    TrigPulse  trigLlrfAccel_;
-    TrigPulse  trigLlrfStandby_;
-    TrigPulse  trigModAccel_;
-    TrigPulse  trigModStandby_;
-    TrigPulse  trigRtmDaqAccel_;
-    TrigPulse  trigRtmDaqStandby_;
-    TrigPulse  trigSsbAccel_;
-    TrigPulse  trigSsbStandby_;
-    
     ScalVal    OutputEnable_; 
     ScalVal    CWModeEnable_; 
     ScalVal    referenceChannel_; 
@@ -87,15 +78,12 @@ protected:
     ScalVal_RO fpgaVersion_;
     ScalVal_RO measuredTrigPeriod_;
     ScalVal_RO trigCounter_;
-    ScalVal    trigHwArm_;
-    ScalVal    waveformInit_;
+    Command    trigHwArm_;
+    Command    waveform0Init_;
+    Command    waveform1Init_;
     ScalVal    daqSize_;
     ScalVal    daqBufStartAddr_;
     ScalVal    daqBufEndAddr_;
-
-    ScalVal    TriggerHw_;
-    ScalVal    TriggerSw0_;
-    ScalVal    TriggerSw1_;
 
     ScalVal_RO debugPacketCnt_;
     ScalVal_RO debugTrgCnt0_;
@@ -115,6 +103,24 @@ protected:
     ScalVal    atten4inBay1_;
     ScalVal    atten5inBay1_;
     
+    ScalVal_RO bay0Temp0MSB_;
+    ScalVal_RO bay0Temp0LSB_;
+    ScalVal_RO bay0Temp1MSB_;
+    ScalVal_RO bay0Temp1LSB_;
+    ScalVal_RO bay0Temp2MSB_;
+    ScalVal_RO bay0Temp2LSB_;
+    ScalVal_RO bay0Temp3MSB_;
+    ScalVal_RO bay0Temp3LSB_;
+    
+    ScalVal_RO bay1Temp0MSB_;
+    ScalVal_RO bay1Temp0LSB_;
+    ScalVal_RO bay1Temp1MSB_;
+    ScalVal_RO bay1Temp1LSB_;
+    ScalVal_RO bay1Temp2MSB_;
+    ScalVal_RO bay1Temp2LSB_;
+    ScalVal_RO bay1Temp3MSB_;
+    ScalVal_RO bay1Temp3LSB_;
+    
     ScalVal_RO intPhaseError_;
     ScalVal    ckPhaseSet_;
       
@@ -130,11 +136,11 @@ protected:
 //    Stream stream6_;
 //    Stream stream7_;
 
-    std::map<Trigger, TrigPulse> triggers_;
-
     std::map<StreamId, ScalVal> debugStreamSelect_;
     
     std::map<int, ScalVal> atten_;
+
+    std::map<int, ScalVal_RO> tempBytes_;
     
     
 // 
@@ -239,13 +245,13 @@ public:
     virtual void loadConfigFromYamlFile( const char *filename, const char *yaml_dir = 0 );
     virtual void dumpConfigToYamlFile(   const char *filename, const char *yaml_dir = 0 );
 
-    virtual void TriggerSw(bool enable);
-
     virtual void getDebugPacketCnt(uint32_t *dbgCnt);
     virtual void getDebugTrgCnt(uint32_t *dbgCnt0, uint32_t *dbgCnt1);
     
     virtual void setAtten(uint32_t att, int bay, int chn);
     virtual void setAtten(uint32_t att, int index);
+    virtual void getTemp(int bay, int sensor, double *temp);
+    virtual void getTemp(int index, double *temp);
     virtual void getIntPhaseError(int32_t *phase);
     virtual void setCKPhase(uint32_t ckPhase);
 
@@ -284,15 +290,7 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   IEntryAdapt(k, p, ie),
   pKlystron_(                                      p->findByName("AppTop/AppCore") ),
   
-  trigMode_          (  IScalVal::create( pKlystron_->findByName("SysgenMR/TimingMode") ) ),
-  trigLlrfAccel_(       ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[0]") ) ),
-  trigLlrfStandby_(     ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[1]") ) ),
-  trigModAccel_(        ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[2]") ) ),
-  trigModStandby_(      ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[3]") ) ),
-  trigRtmDaqAccel_(     ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[4]") ) ),
-  trigRtmDaqStandby_(   ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[5]") ) ),
-  trigSsbAccel_(        ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[6]") ) ),
-  trigSsbStandby_(      ITrigPulse::create( p->findByName("AppTop/AppTopTrig/LclsTriggerPulse[7]") ) ),
+  trigMode_(            IScalVal::create( pKlystron_->findByName("TriggerMode") ) ),
   OutputEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/OutputEnable") ) ),
   CWModeEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/CWModeEnable") ) ),
   referenceChannel_(    IScalVal::create( pKlystron_->findByName("SysgenMR/ReferenceChannel") ) ),
@@ -334,15 +332,12 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   fpgaVersion_(         IScalVal_RO::create(      p->findByName("AmcCarrierCore/AxiVersion/FpgaVersion") ) ),
   measuredTrigPeriod_(  IScalVal_RO::create( pKlystron_->findByName("SysgenMR/MeasuredTrigPeriod") ) ),
   trigCounter_(         IScalVal_RO::create( pKlystron_->findByName("SysgenMR/TriggerCounter") ) ),
-  trigHwArm_(           IScalVal::create( p->findByName("AppTop/DaqMuxV2[1]/TriggerHwArm") ) ),
-  waveformInit_(        IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/Init") ) ),
+  trigHwArm_(           ICommand::create( p->findByName("AppTop/DaqMuxV2[1]/ArmHwTrigger") ) ),
+  waveform0Init_(        ICommand::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine[0]/WaveformEngineBuffers/Initialize") ) ),
+  waveform1Init_(        ICommand::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine[1]/WaveformEngineBuffers/Initialize") ) ),
   daqSize_(           IScalVal::create( p->findByName("AppTop/DaqMuxV2/DataBufferSize") ) ),
   daqBufStartAddr_(           IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/StartAddr") ) ),
   daqBufEndAddr_(           IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/EndAddr") ) ),
-
-  TriggerHw_(           IScalVal::create( pKlystron_->findByName("SysgenMR/hwTrig") ) ),
-  TriggerSw0_(            IScalVal::create( p->findByName("AppTop/DaqMuxV2[0]/TriggerSw") ) ),
-  TriggerSw1_(            IScalVal::create( p->findByName("AppTop/DaqMuxV2[1]/TriggerSw") ) ),
 
   debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierCore/SwRssiServer[1]/ValidCnt") ) ),
   debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AppTop/DaqMuxV2[0]/TrigCount") ) ),
@@ -361,6 +356,24 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   atten3inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[3]/SetValue") ) ),
   //atten4inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[4]/SetValue") ) ),   // bay1 doesn't have 4 and 5
   //atten5inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[5]/SetValue") ) ),   // bay1 doens't have 4 and 5
+  
+  bay0Temp0MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[0]/TempMSByte") ) ),
+  bay0Temp0LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[0]/TempLSByte") ) ),
+  bay0Temp1MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[1]/TempMSByte") ) ),
+  bay0Temp1LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[1]/TempLSByte") ) ),
+  bay0Temp2MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[2]/TempMSByte") ) ),
+  bay0Temp2LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[2]/TempLSByte") ) ),
+  bay0Temp3MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[3]/TempMSByte") ) ),
+  bay0Temp3LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[3]/TempLSByte") ) ),
+  
+  bay1Temp0MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[0]/TempMSByte") ) ),
+  bay1Temp0LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[0]/TempLSByte") ) ),
+  bay1Temp1MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[1]/TempMSByte") ) ),
+  bay1Temp1LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[1]/TempLSByte") ) ),
+  bay1Temp2MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[2]/TempMSByte") ) ),
+  bay1Temp2LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[2]/TempLSByte") ) ),
+  bay1Temp3MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[3]/TempMSByte") ) ),
+  bay1Temp3LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[3]/TempLSByte") ) ),
   
   intPhaseError_(        IScalVal_RO::create(pKlystron_->findByName("SysgenMR/IntPhaseError") ) ),    // phase error between ereference and feedback channel
   ckPhaseSet_(           IScalVal::create(pKlystron_->findByName("SysgenMR/CKPhaseSet") ) ),
@@ -400,15 +413,6 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
 //  stream7_(             IStream::create(      p->findByName("Stream7") ) )
 {
 
-    triggers_[ LLRF_ACCEL ] = trigLlrfAccel_;
-    triggers_[ LLRF_STDBY ] = trigLlrfStandby_;
-    triggers_[ MOD_ACCEL ]  = trigModAccel_;
-    triggers_[ MOD_STDBY ]  = trigModStandby_;
-    triggers_[ SSB_ACCEL ]  = trigSsbAccel_;
-    triggers_[ SSB_STDBY ]  = trigSsbStandby_;
-    triggers_[ RTM_ACCEL ]  = trigRtmDaqAccel_;
-    triggers_[ RTM_STDBY ]  = trigRtmDaqStandby_;
-
     debugStreamSelect_[STREAM_0] = debugStream0Select_;
     debugStreamSelect_[STREAM_1] = debugStream1Select_;
     debugStreamSelect_[STREAM_2] = debugStream2Select_;
@@ -431,6 +435,24 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
     atten_[10] = atten4inBay1_;
     atten_[11] = atten5inBay1_;
 
+
+    tempBytes_[0] = bay0Temp0MSB_;
+    tempBytes_[1] = bay0Temp0LSB_;
+    tempBytes_[2] = bay0Temp1MSB_;
+    tempBytes_[3] = bay0Temp1LSB_;
+    tempBytes_[4] = bay0Temp2MSB_;
+    tempBytes_[5] = bay0Temp2LSB_;
+    tempBytes_[6] = bay0Temp3MSB_;
+    tempBytes_[7] = bay0Temp3LSB_;
+    
+    tempBytes_[8] = bay1Temp0MSB_;
+    tempBytes_[9] = bay1Temp0LSB_;
+    tempBytes_[10] = bay1Temp1MSB_;
+    tempBytes_[11] = bay1Temp1LSB_;
+    tempBytes_[12] = bay1Temp2MSB_;
+    tempBytes_[13] = bay1Temp2LSB_;
+    tempBytes_[14] = bay1Temp3MSB_;
+    tempBytes_[15] = bay1Temp3LSB_;
     
      
 }
@@ -487,43 +509,22 @@ void CKlystronFwAdapt::setTrigMode(TrigMode mode)
 
 void CKlystronFwAdapt::setTrigPolarity(Trigger trig, TrigPolarity polarity)
 {
-    try {
-        triggers_[trig]->setTrigPolarity( (ITrigPulse::TrigPolarity) polarity );
-    } catch ( CPSWError &e ) {
-        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
-        throw e;
-    }
+    return;
 }
 
 void CKlystronFwAdapt::setTrigDelay(Trigger trig, double value_ns, double freq_MHz)
 {
-    try {
-        triggers_[trig]->setTrigDelay( value_ns, freq_MHz );
-    } catch ( CPSWError &e ) {
-        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
-        throw e;
-    }
+    return;
 }
 
 void CKlystronFwAdapt::setTrigWidth(Trigger trig, double value_ns, double freq_MHz)
 {
-    try {
-        triggers_[trig]->setTrigWidth( value_ns, freq_MHz );
-    } catch ( CPSWError &e ) {
-        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
-        throw e;
-    }
+    return;
 }
 
 void CKlystronFwAdapt::setTrigOpCode(Trigger trig, std::vector<int> opCodes)
 {
-
-    try {
-        triggers_[trig]->setTrigOpCode( opCodes );
-    } catch ( CPSWError &e ) {
-        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
-        throw e;
-    }
+    return;
 }
 
 
@@ -890,18 +891,18 @@ void  CKlystronFwAdapt::getFwStatus(uint32_t *platformStatus, uint32_t *RFCtrlSt
 
 void CKlystronFwAdapt::armDaq()
 {
-//    waveformInit_->setVal( (uint64_t) 1 );
-//    waveformInit_->setVal( (uint64_t) 0 );
-    trigHwArm_->setVal( (uint64_t) 1 );
-    trigHwArm_->setVal( (uint64_t) 0 );
+    //waveformInit_->setVal( (uint64_t) 1 );
+    //waveformInit_->setVal( (uint64_t) 0 );
+    trigHwArm_->execute();
 }
 
 void CKlystronFwAdapt::initBuf(void)
 {
 
-    waveformInit_->setVal( (uint64_t) 1 );
-    waveformInit_->setVal( (uint64_t) 0 );
-
+//    waveformInit_->setVal( (uint64_t) 0 );
+//    waveformInit_->setVal( (uint64_t) 1 );
+    waveform0Init_->execute();
+    waveform1Init_->execute();
 }
 
 
@@ -931,13 +932,6 @@ KlystronFw IKlystronFw::create(Path p)
     return IEntryAdapt::check_interface<KlystronFwAdapt, DevImpl>( p );
 }
 
-
-void CKlystronFwAdapt::TriggerSw(bool enable)
-{
-    //TriggerSw0_->setVal( (uint64_t) enable);
-    //TriggerSw1_->setVal( (uint64_t) enable);
-    TriggerHw_->setVal( (uint64_t) enable);
-}
 
 //
 
@@ -983,6 +977,45 @@ void CKlystronFwAdapt::setAtten(uint32_t att, int index)
     } catch( CPSWError &e ) {
         fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
         throw e;
+    }
+
+}
+
+void CKlystronFwAdapt::getTemp(int bay, int sensor, double *temp)
+{
+    int index = bay*4 + sensor;
+    uint8_t buffer[2];
+    try {
+        tempBytes_[index*2]->getVal(buffer, 2);
+    } catch( CPSWError &e ) {
+        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+    
+    if (buffer[0] & 0x80) { // if sign bit is set, negative
+        *temp = ( (buffer[0]<<8) + buffer[1] - 0x10000) / 128.0;
+    }
+    else { // else positive
+        *temp = ( (buffer[0]<<8) + buffer[1]) / 128.0;
+    }
+
+}
+
+void CKlystronFwAdapt::getTemp(int index, double *temp)
+{
+    uint8_t buffer[2];
+    try {
+        tempBytes_[index*2]->getVal(buffer, 2);
+    } catch( CPSWError &e ) {
+        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+    
+    if (buffer[0] & 0x80) { // if sign bit is set, negative
+        *temp = ( (buffer[0]<<8) + buffer[1] - 0x10000) / 128.0;
+    }
+    else { // else positive
+        *temp = ( (buffer[0]<<8) + buffer[1]) / 128.0;
     }
 
 }
