@@ -20,6 +20,14 @@ public:
     typedef enum StreamSel { BAY0CH0 = 0, BAY0CH1=1, BAY0CH2=2, BAY0CH3=3, BAY0CH4=4, BAY0CH5=5, BAY1CH0=6, BAY1CH1=7, BAY1CH2=8, BAY2CH3=9, BAY2CH4=10, BAY2CH5=11, DAC_OUTPUT=12, PHASE_ERR=13 } StreamSel;
     
     virtual void reset()                      = 0;
+
+    virtual void setLO_KP(uint32_t KP)        = 0;
+    virtual void setLO_KI(uint32_t KI)        = 0;
+    virtual void setCLK_KP(uint32_t KP)       = 0;
+    virtual void setCLK_KI(uint32_t KI)       = 0;
+    virtual void setADPLL_KP(uint32_t KP)     = 0;
+    virtual void setADPLL_KI(uint32_t KI)     = 0;
+
     virtual void OutputEnable(bool enable)    = 0; /* Set this to 1 at startup */
     virtual void CWOutputEnable(bool enable)  = 0; 
     virtual void setDebugStreamSelect(StreamId sid, StreamSel ssel) = 0;

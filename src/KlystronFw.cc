@@ -37,6 +37,13 @@ protected:
 
     ScalVal    trigMode_;
     
+    ScalVal    LO_KP_;
+    ScalVal    LO_KI_;
+    ScalVal    CLK_KP_;
+    ScalVal    CLK_KI_;
+    ScalVal    ADPLL_KP_;
+    ScalVal    ADPLL_KI_;
+    
     ScalVal    OutputEnable_; 
     ScalVal    CWModeEnable_; 
     ScalVal    referenceChannel_; 
@@ -177,6 +184,12 @@ public:
 
 public:
     virtual void reset();
+    virtual void setLO_KP(uint32_t KP);
+    virtual void setLO_KI(uint32_t KI);
+    virtual void setCLK_KP(uint32_t KP);
+    virtual void setCLK_KI(uint32_t KI);
+    virtual void setADPLL_KP(uint32_t KP);
+    virtual void setADPLL_KI(uint32_t KI);
     virtual void OutputEnable(bool enable);
     virtual void CWOutputEnable(bool enable);
     virtual void setDebugStreamSelect(StreamId sid, StreamSel ssel);
@@ -291,6 +304,14 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   pKlystron_(                                      p->findByName("AppTop/AppCore") ),
   
   trigMode_(            IScalVal::create( pKlystron_->findByName("TriggerMode") ) ),
+  
+  LO_KP_(               IScalVal::create( pKlystron_->findByName("SysgenMR/LO_KP") ) ),
+  LO_KI_(               IScalVal::create( pKlystron_->findByName("SysgenMR/LO_KI") ) ),
+  CLK_KP_(              IScalVal::create( pKlystron_->findByName("SysgenMR/CLK_KP") ) ),
+  CLK_KI_(              IScalVal::create( pKlystron_->findByName("SysgenMR/CLK_KI") ) ),
+  ADPLL_KP_(            IScalVal::create( pKlystron_->findByName("SysgenMR/ADPLL") ) ),
+  ADPLL_KI_(            IScalVal::create( pKlystron_->findByName("SysgenMR/ADPLL_KI") ) ),
+  
   OutputEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/OutputEnable") ) ),
   CWModeEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/CWModeEnable") ) ),
   referenceChannel_(    IScalVal::create( pKlystron_->findByName("SysgenMR/ReferenceChannel") ) ),
@@ -460,6 +481,66 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
 void CKlystronFwAdapt::reset()
 {
 
+}
+
+void CKlystronFwAdapt::setLO_KP(uint32_t KP)
+{
+    try {
+        LO_KP_->setVal(KP);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::setLO_KI(uint32_t KI)
+{
+    try {
+        LO_KI_->setVal(KI);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::setCLK_KP(uint32_t KP)
+{
+    try {
+        CLK_KP_->setVal(KP);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::setCLK_KI(uint32_t KI)
+{
+    try {
+        CLK_KI_->setVal(KI);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::setADPLL_KP(uint32_t KP)
+{
+    try {
+        ADPLL_KP_->setVal(KP);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::setADPLL_KI(uint32_t KI)
+{
+    try {
+        ADPLL_KI_->setVal(KI);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
 }
 
 void CKlystronFwAdapt::OutputEnable(bool enable)
