@@ -172,6 +172,8 @@ protected:
     ScalVal_RO   rtmRFOffStatus_;
     ScalVal_RO   rtmAdcIn_;
     ScalVal      rtmMode_;
+    ScalVal      rtmTuneSled_;
+    ScalVal      rtmDetuneSled_;
     ScalVal_RO   rtmAdcBufferBeamIV_;
     ScalVal_RO   rtmAdcBufferFwdRef_;
     Command      rtmRearm_Cmd_;
@@ -292,6 +294,7 @@ public:
     virtual void getRtmRFOffStatus(uint32_t *rtmRFOffStatus);
     virtual void getRtmAdcIn(uint32_t v[]);
     virtual void setRtmMode(uint32_t v);
+    virtual void setRtmDesiredSled(bool tune);
     virtual void getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[]);
     virtual void getRtmFastAdcBufferForwardReflect(uint32_t v[]);
     virtual void cmdRtmRearm(void);
@@ -418,6 +421,8 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   rtmRFOffStatus_(       IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/RfOff") ) ),
   rtmAdcIn_(             IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/AdcIn") ) ),
   rtmMode_(              IScalVal::create(pKlystron_->findByName("RtmRfInterlock/Mode") ) ),
+  rtmTuneSled_(          IScalVal::create(pKlystron_->findByName("RtmRfInterlock/TuneSled") ) ),
+  rtmDetuneSled_(        IScalVal::create(pKlystron_->findByName("RtmRfInterlock/DetuneSled") ) ),
   rtmAdcBufferBeamIV_(   IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/RtmAdcBuffer[0]/MemoryArray") ) ),
   rtmAdcBufferFwdRef_(   IScalVal_RO::create(pKlystron_->findByName("RtmRfInterlock/RtmAdcBuffer[1]/MemoryArray") ) ),
   rtmRearm_Cmd_(         ICommand::create(pKlystron_->findByName("RtmRfInterlock/RearmTrigger") ) ),
@@ -1351,6 +1356,23 @@ void CKlystronFwAdapt::setRtmMode(uint32_t reg)
 {
     try {
         rtmMode_->setVal(reg);
+    } catch( CPSWError &e ) {
+        fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::setRtmDesiredSled(bool tune)
+{
+    try {
+        if(tune) {
+            rtmDetuneSled_->setVal( (uint64_t) 0);
+            rtmTuneSled_->setVal( (uint64_t) 1);
+        }
+        else {
+            rtmTuneSled_->setVal( (uint64_t) 0);
+            rtmDetuneSled_->setVal( (uint64_t) 1);
+        }
     } catch( CPSWError &e ) {
         fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
         throw e;

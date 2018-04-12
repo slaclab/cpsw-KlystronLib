@@ -126,6 +126,7 @@ public:
     virtual void getRtmRFOffStatus(uint32_t *rtmRFOffStatus) = 0;
     virtual void getRtmAdcIn(uint32_t v[]) = 0;
     virtual void setRtmMode(uint32_t v) = 0;
+    virtual void setRtmDesiredSled(bool tune) = 0;
     virtual void getRtmFastAdcBufferBeamCurrentVoltage(uint32_t v[]) = 0;
     virtual void getRtmFastAdcBufferForwardReflect(uint32_t v[]) =0;
     virtual void cmdRtmRearm(void) = 0;
