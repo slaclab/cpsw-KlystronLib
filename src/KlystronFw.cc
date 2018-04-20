@@ -85,6 +85,7 @@ protected:
     ScalVal_RO fpgaVersion_;
     ScalVal_RO measuredTrigPeriod_;
     ScalVal_RO trigCounter_;
+    ScalVal    msgNoDelay_;
     Command    trigHwArm_;
     Command    waveform0Init_;
     Command    waveform1Init_;
@@ -254,6 +255,7 @@ public:
 //                                                            uint8_t *data4, uint8_t *data5,
 //                                                            uint8_t *data6, uint8_t *data7);
 
+    virtual void msgNoDelay(uint32_t no_delay);
     virtual void armDaq();
     virtual void initBuf(void);
 
@@ -356,6 +358,7 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   fpgaVersion_(         IScalVal_RO::create(      p->findByName("AmcCarrierCore/AxiVersion/FpgaVersion") ) ),
   measuredTrigPeriod_(  IScalVal_RO::create( pKlystron_->findByName("SysgenMR/MeasuredTrigPeriod") ) ),
   trigCounter_(         IScalVal_RO::create( pKlystron_->findByName("SysgenMR/TriggerCounter") ) ),
+  msgNoDelay_(          IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierTiming/TimingFrameRx/MsgNoDelay") ) ),
   trigHwArm_(           ICommand::create( p->findByName("AppTop/DaqMuxV2[1]/ArmHwTrigger") ) ),
   waveform0Init_(        ICommand::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine[0]/WaveformEngineBuffers/Initialize") ) ),
   waveform1Init_(        ICommand::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine[1]/WaveformEngineBuffers/Initialize") ) ),
@@ -974,6 +977,14 @@ void  CKlystronFwAdapt::getFwStatus(uint32_t *platformStatus, uint32_t *RFCtrlSt
 }
 
 
+void CKlystronFwAdapt::msgNoDelay(uint32_t no_delay)
+{
+    uint32_t zero(0), one(1);
+
+    if(no_delay) msgNoDelay_->setVal(&one);
+    else         msgNoDelay_->setVal(&zero);
+
+}
 
 void CKlystronFwAdapt::armDaq()
 {

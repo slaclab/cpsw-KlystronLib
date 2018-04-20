@@ -91,6 +91,7 @@ public:
 //                                                            uint8_t *data4, uint8_t *data5,
 //                                                            uint8_t *data6, uint8_t *data7) = 0;
 
+    virtual void msgNoDelay(uint32_t no_delay) = 0;
     virtual void armDaq()      = 0;  /* rearm the DAQ (and async messages) */
     virtual void initBuf(void) = 0;
 
