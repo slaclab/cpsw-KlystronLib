@@ -7,6 +7,8 @@ SRCDIR=.
 
 include $(CPSW_DIR)/defs.mak
 
+INSTALL_DIR=../
+
 HEADERS += KlystronFw.h
 
 KlystronLib_SRCS  = TrigPulse.cc KlystronFw.cc
