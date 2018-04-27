@@ -366,7 +366,7 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   daqBufStartAddr_(           IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/StartAddr") ) ),
   daqBufEndAddr_(           IScalVal::create( p->findByName("AmcCarrierCore/AmcCarrierBsa/BsaWaveformEngine/WaveformEngineBuffers/EndAddr") ) ),
 
-  debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierCore/SwRssiServer[1]/ValidCnt") ) ),
+//  debugPacketCnt_(            IScalVal_RO::create( p->findByName("AmcCarrierCore/SwRssiServer[1]/ValidCnt") ) ),
   debugTrgCnt0_(         IScalVal_RO::create( p->findByName("AppTop/DaqMuxV2[0]/TrigCount") ) ),
   debugTrgCnt1_(         IScalVal_RO::create( p->findByName("AppTop/DaqMuxV2[1]/TrigCount") ) ),
   
@@ -1035,7 +1035,7 @@ KlystronFw IKlystronFw::create(Path p)
 void CKlystronFwAdapt::getDebugPacketCnt(uint32_t *dbgCnt)
 {
     try {
-        debugPacketCnt_->getVal(dbgCnt);
+//        debugPacketCnt_->getVal(dbgCnt);
     } catch( CPSWError &e ) {
         fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
         throw e;
