@@ -1,3 +1,9 @@
+R1.2.3         04-27-2018     Kukhee Kim (khkim)
+               - Update API for latest firmware changes:
+                 - Comment out packet counter register in SwRssiServer
+                 - add msgNoDelay register to control the LCLS1 timing pattern delay.
+               - Bump up to cpsw/framework R3.6.4
+
 R1.2.2         02-26-2018     Thomas Kurty (tkurty)
                - Update AppTop and AppCore register names from new firmware (2018-01 and later)
                - Add Software Trigger register for debugging
