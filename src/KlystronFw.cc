@@ -683,7 +683,7 @@ void CKlystronFwAdapt::setRefPhaSP(double phaSP_deg)
 void  CKlystronFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplitude_norm, double phase_deg)
 {
     int32_t cs   = (int32_t)(amplitude_norm * cos( phase_deg * PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));
-    int32_t sn   = (int32_t)(amplitude_norm * sin( phase_deg * PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));    
+    int32_t sn   = (int32_t)(amplitude_norm * sin( phase_deg * -PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));    
     /* writeRegister */  
     try {
 	if ( timeslot == FOUR ) {
