@@ -1081,38 +1081,40 @@ void CKlystronFwAdapt::setAtten(uint32_t att, int index)
 void CKlystronFwAdapt::getTemp(int bay, int sensor, double *temp)
 {
     int index = bay*4 + sensor;
-    uint8_t buffer[2];
+    uint8_t MSB, LSB;
     try {
-        tempBytes_[index*2]->getVal(buffer, 2);
+        tempBytes_[index*2]->getVal(&MSB);
+        tempBytes_[index*2+1]->getVal(&LSB);
     } catch( CPSWError &e ) {
         fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
         throw e;
     }
     
-    if (buffer[0] & 0x80) { // if sign bit is set, negative
-        *temp = ( (buffer[0]<<8) + buffer[1] - 0x10000) / 128.0;
+    if (MSB & 0x80) { // if sign bit is set, negative
+        *temp = ( (MSB<<8) + LSB - 0x10000 ) / 128.0;
     }
     else { // else positive
-        *temp = ( (buffer[0]<<8) + buffer[1]) / 128.0;
+        *temp = ( (MSB<<8) + LSB ) / 128.0;
     }
 
 }
 
 void CKlystronFwAdapt::getTemp(int index, double *temp)
 {
-    uint8_t buffer[2];
+    uint8_t MSB, LSB;
     try {
-        tempBytes_[index*2]->getVal(buffer, 2);
+        tempBytes_[index*2]->getVal(&MSB);
+        tempBytes_[index*2+1]->getVal(&LSB);
     } catch( CPSWError &e ) {
         fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
         throw e;
     }
     
-    if (buffer[0] & 0x80) { // if sign bit is set, negative
-        *temp = ( (buffer[0]<<8) + buffer[1] - 0x10000) / 128.0;
+    if (MSB & 0x80) { // if sign bit is set, negative
+        *temp = ( (MSB<<8) + LSB - 0x10000 ) / 128.0;
     }
     else { // else positive
-        *temp = ( (buffer[0]<<8) + buffer[1]) / 128.0;
+        *temp = ( (MSB<<8) + LSB ) / 128.0;
     }
 
 }

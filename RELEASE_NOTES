@@ -1,3 +1,6 @@
+R1.2.5         05-30-2018     Thomas Kurty (tkurty)
+               - Fix temperature sensor "Least Significant Byte" (LSB) register read
+
 R1.2.4         05-25-2018     Thomas Kurty (tkurty)
                - Phase correction sign is flipped somewhere in firmware (v. 2018-05-10-13:53:18)
                - Flip sign again in KlystronLib as a workaround
