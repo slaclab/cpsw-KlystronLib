@@ -1,3 +1,6 @@
+Branch out to ued_llrf,  03-15-2019 Kukhee Kim (khkim)
+               - support 6 timeslot firmware for 360Hz operation
+
 R1.2.5         05-30-2018     Thomas Kurty (tkurty)
                - Fix temperature sensor "Least Significant Byte" (LSB) register read
 
