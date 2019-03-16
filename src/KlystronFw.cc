@@ -51,10 +51,21 @@ protected:
     ScalVal    referencePhaseSet_; 
     ScalVal    feedbackRotI_;
     ScalVal    feedbackRotQ_;
-    ScalVal    ICorrSoftware_;
-    ScalVal    QCorrSoftware_;
-    ScalVal    ICorrSoftwareTimeslot4_;
-    ScalVal    QCorrSoftwareTimeslot4_;
+
+    ScalVal    ICorrSoftware_TS1_;
+    ScalVal    QCorrSoftware_TS1_;
+    ScalVal    ICorrSoftware_TS2_;
+    ScalVal    QCorrSoftware_TS2_;
+    ScalVal    ICorrSoftware_TS3_;
+    ScalVal    QCorrSoftware_TS3_;
+    ScalVal    ICorrSoftware_TS4_;
+    ScalVal    QCorrSoftware_TS4_;
+    ScalVal    ICorrSoftware_TS5_;
+    ScalVal    QCorrSoftware_TS5_;
+    ScalVal    ICorrSoftware_TS6_;
+    ScalVal    QCorrSoftware_TS6_;
+
+
     ScalVal    enableTimeslotCorrection_;
     ScalVal    feedforwardP_; 
     ScalVal    feedforwardA_;
@@ -324,10 +335,20 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   referencePhaseSet_(   IScalVal::create( pKlystron_->findByName("SysgenMR/ReferencePhaseSet") ) ),
   feedbackRotI_(        IScalVal::create( pKlystron_->findByName("SysgenMR/FeedbackRotI") ) ),
   feedbackRotQ_(        IScalVal::create( pKlystron_->findByName("SysgenMR/FeedbackRotQ") ) ),
-  ICorrSoftware_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware") ) ),
-  QCorrSoftware_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware") ) ),
-  ICorrSoftwareTimeslot4_(IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS4") ) ),
-  QCorrSoftwareTimeslot4_(IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS4") ) ),
+
+  ICorrSoftware_TS1_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS1") ) ),
+  QCorrSoftware_TS1_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS1") ) ),
+  ICorrSoftware_TS2_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS2") ) ),
+  QCorrSoftware_TS2_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS2") ) ),
+  ICorrSoftware_TS3_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS3") ) ),
+  QCorrSoftware_TS3_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS3") ) ),
+  ICorrSoftware_TS4_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS4") ) ),
+  QCorrSoftware_TS4_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS4") ) ),
+  ICorrSoftware_TS5_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS5") ) ),
+  QCorrSoftware_TS5_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS5") ) ),
+  ICorrSoftware_TS6_(       IScalVal::create( pKlystron_->findByName("SysgenMR/ICorrSoftware_TS6") ) ),
+  QCorrSoftware_TS6_(       IScalVal::create( pKlystron_->findByName("SysgenMR/QCorrSoftware_TS6") ) ),
+  
   enableTimeslotCorrection_(IScalVal::create( pKlystron_->findByName("SysgenMR/EnableTimeslotCorrection") ) ),
   feedforwardP_(        IScalVal::create( pKlystron_->findByName("SysgenMR/FeedforwardP") ) ),
   feedforwardA_(        IScalVal::create( pKlystron_->findByName("SysgenMR/FeedforwardA") ) ),
@@ -686,13 +707,34 @@ void  CKlystronFwAdapt::setSWFeedbackCorrection(Timeslot timeslot, double amplit
     int32_t sn   = (int32_t)(amplitude_norm * sin( phase_deg * -PI/180.0 ) * pow(2, FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION));    
     /* writeRegister */  
     try {
-	if ( timeslot == FOUR ) {
-	    ICorrSoftwareTimeslot4_->setVal( (uint32_t*) &cs, 1 );
-            QCorrSoftwareTimeslot4_->setVal( (uint32_t*) &sn, 1 );
-	} else {
-            ICorrSoftware_->setVal( (uint32_t*) &cs, 1 );
-            QCorrSoftware_->setVal( (uint32_t*) &sn, 1 );
-	}
+    
+      switch (timeslot) {
+          case ONE:
+              ICorrSoftware_TS1_->setVal( (uint32_t*) &cs, 1 );
+              QCorrSoftware_TS1_->setVal( (uint32_t*) &sn, 1 );
+              break;
+          case TWO:
+              ICorrSoftware_TS2_->setVal( (uint32_t*) &cs, 1 );
+              QCorrSoftware_TS2_->setVal( (uint32_t*) &sn, 1 );
+              break;
+          case THREE:
+              ICorrSoftware_TS3_->setVal( (uint32_t*) &cs, 1 );
+              QCorrSoftware_TS3_->setVal( (uint32_t*) &sn, 1 );
+              break;
+          case FOUR:
+              ICorrSoftware_TS4_->setVal( (uint32_t*) &cs, 1 );
+              QCorrSoftware_TS4_->setVal( (uint32_t*) &sn, 1 );
+              break;
+          case FIVE:
+              ICorrSoftware_TS5_->setVal( (uint32_t*) &cs, 1 );
+              QCorrSoftware_TS5_->setVal( (uint32_t*) &sn, 1 );
+              break;
+          case SIX:
+              ICorrSoftware_TS6_->setVal( (uint32_t*) &cs, 1 );
+              QCorrSoftware_TS6_->setVal( (uint32_t*) &sn, 1 );
+              break;
+      }
+  
     } catch ( CPSWError &e ) {
         fprintf(stderr,"CPSW Error: %s\n", e.getInfo().c_str());
         throw e;
@@ -714,13 +756,33 @@ void  CKlystronFwAdapt::getSWFeedbackCorrection(Timeslot timeslot, double *ampli
     double sn_scale;
     /* readRegisters */  
     try {
-	if ( timeslot == FOUR ) {
-	    ICorrSoftwareTimeslot4_->getVal( (uint32_t*) &cs );
-            QCorrSoftwareTimeslot4_->getVal( (uint32_t*) &sn );
-	} else {
-            ICorrSoftware_->getVal( (uint32_t*) &cs );
-            QCorrSoftware_->getVal( (uint32_t*) &sn );
-	}
+        switch(timeslot) {
+            case ONE:
+                ICorrSoftware_TS1_->getVal( (uint32_t*) &cs );
+                QCorrSoftware_TS1_->getVal( (uint32_t*) &sn );
+                break;
+            case TWO:
+                ICorrSoftware_TS2_->getVal( (uint32_t*) &cs );
+                QCorrSoftware_TS2_->getVal( (uint32_t*) &sn );
+                break;
+            case THREE:
+                ICorrSoftware_TS3_->getVal( (uint32_t*) &cs );
+                QCorrSoftware_TS3_->getVal( (uint32_t*) &sn );
+                break;
+            case FOUR:
+                ICorrSoftware_TS4_->getVal( (uint32_t*) &cs );
+                QCorrSoftware_TS4_->getVal( (uint32_t*) &sn );
+                break;
+            case FIVE:
+                ICorrSoftware_TS5_->getVal( (uint32_t*) &cs );
+                QCorrSoftware_TS5_->getVal( (uint32_t*) &sn );
+                break;
+            case SIX:
+                ICorrSoftware_TS6_->getVal( (uint32_t*) &cs );
+                QCorrSoftware_TS6_->getVal( (uint32_t*) &sn );
+                break;
+        }
+        
 	cs_scale = cs * pow(2, -FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION);
 	sn_scale = sn * pow(2, -FWC_COMMON_PLATFORM_IQFB_CONST_COR_COEF_FRACTION);
 	*phase_deg = atan2( sn_scale, cs_scale ) * 180.0/PI;
