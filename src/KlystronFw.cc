@@ -44,6 +44,16 @@ protected:
     ScalVal    ADPLL_KP_;
     ScalVal    ADPLL_KI_;
     
+    ScalVal_RO loPllPhase_;
+    ScalVal_RO loPllAmplitude_;
+    ScalVal_RO loPllLocked_;
+    ScalVal_RO clockPllPhase_;
+    ScalVal_RO clockPllAmplitude_;
+    ScalVal_RO clockPllLocked_;
+    ScalVal_RO adPllPhase_;
+    ScalVal_RO adPllAmplitude_;
+    ScalVal_RO adPllLocked_;
+    
     ScalVal    OutputEnable_; 
     ScalVal    CWModeEnable_; 
     ScalVal    referenceChannel_; 
@@ -198,12 +208,24 @@ public:
 
 public:
     virtual void reset();
+    
     virtual void setLO_KP(uint32_t KP);
     virtual void setLO_KI(uint32_t KI);
     virtual void setCLK_KP(uint32_t KP);
     virtual void setCLK_KI(uint32_t KI);
     virtual void setADPLL_KP(uint32_t KP);
     virtual void setADPLL_KI(uint32_t KI);
+    
+    virtual void getLoPllPhase(uint32_t *phase);
+    virtual void getLoPllAmplitude(uint32_t *amplitude);
+    virtual void getLoPllLocked(uint32_t *lockStatus);
+    virtual void getClockPllPhase(uint32_t *phase);
+    virtual void getClockPllAmplitude(uint32_t *amplitude);
+    virtual void getClockPllLocked(uint32_t *lockStatus);
+    virtual void getAdPllPhase(uint32_t *phase);
+    virtual void getAdPllAmplitude(uint32_t *amplitude);
+    virtual void getAdPllLocked(uint32_t *lockStatus);
+    
     virtual void OutputEnable(bool enable);
     virtual void CWOutputEnable(bool enable);
     virtual void setDebugStreamSelect(StreamId sid, StreamSel ssel);
@@ -321,12 +343,22 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   
   trigMode_(            IScalVal::create( pKlystron_->findByName("TriggerMode") ) ),
   
-  LO_KP_(               IScalVal::create( pKlystron_->findByName("SysgenMR/LO_KP") ) ),
-  LO_KI_(               IScalVal::create( pKlystron_->findByName("SysgenMR/LO_KI") ) ),
-  CLK_KP_(              IScalVal::create( pKlystron_->findByName("SysgenMR/CLK_KP") ) ),
-  CLK_KI_(              IScalVal::create( pKlystron_->findByName("SysgenMR/CLK_KI") ) ),
-  ADPLL_KP_(            IScalVal::create( pKlystron_->findByName("SysgenMR/ADPLL") ) ),
-  ADPLL_KI_(            IScalVal::create( pKlystron_->findByName("SysgenMR/ADPLL_KI") ) ),
+  LO_KP_(               IScalVal::create( pKlystron_->findByName("platform/loPllKp") ) ),
+  LO_KI_(               IScalVal::create( pKlystron_->findByName("platform/loPllKi") ) ),
+  CLK_KP_(              IScalVal::create( pKlystron_->findByName("platform/clockPllKp") ) ),
+  CLK_KI_(              IScalVal::create( pKlystron_->findByName("platform/clockPllKi") ) ),
+  ADPLL_KP_(            IScalVal::create( pKlystron_->findByName("platform/adPllKp") ) ),
+  ADPLL_KI_(            IScalVal::create( pKlystron_->findByName("platform/adPllKi") ) ),
+  
+  loPllPhase_(          IScalVal_RO::create( pKlystron_->findByName("platform/loPllPhase") ) ),
+  loPllAmplitude_(      IScalVal_RO::create( pKlystron_->findByName("platform/loPllAmplitude") ) ),
+  loPllLocked_(         IScalVal_RO::create( pKlystron_->findByName("platform/loPllLocked") ) ),
+  clockPllPhase_(       IScalVal_RO::create( pKlystron_->findByName("platform/clockPllPhase") ) ),
+  clockPllAmplitude_(   IScalVal_RO::create( pKlystron_->findByName("platform/clockPllAmplitude") ) ),
+  clockPllLocked_(      IScalVal_RO::create( pKlystron_->findByName("platform/clockPllLocked") ) ),
+  adPllPhase_(          IScalVal_RO::create( pKlystron_->findByName("platform/adPllPhase") ) ),
+  adPllAmplitude_(      IScalVal_RO::create( pKlystron_->findByName("platform/adPllAmplitude") ) ),
+  adPllLocked_(         IScalVal_RO::create( pKlystron_->findByName("platform/adPllLocked") ) ),
   
   OutputEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/OutputEnable") ) ),
   CWModeEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/CWModeEnable") ) ),
@@ -566,6 +598,97 @@ void CKlystronFwAdapt::setADPLL_KI(uint32_t KI)
 {
     try {
         ADPLL_KI_->setVal(KI);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+
+void CKlystronFwAdapt::getLoPllPhase(uint32_t *phase)
+{
+    try {
+        loPllPhase_->getVal(phase);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getLoPllAmplitude(uint32_t *amplitude)
+{
+    try {
+        loPllAmplitude_->getVal(amplitude);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getLoPllLocked(uint32_t *lockStatus)
+{
+    try {
+        loPllLocked_->getVal(lockStatus);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getClockPllPhase(uint32_t *phase)
+{
+    try {
+        clockPllPhase_->getVal(phase);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getClockPllAmplitude(uint32_t *amplitude)
+{
+    try {
+        clockPllAmplitude_->getVal(amplitude);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getClockPllLocked(uint32_t *lockStatus)
+{
+    try {
+        clockPllLocked_->getVal(lockStatus);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getAdPllPhase(uint32_t *phase)
+{
+    try {
+        adPllPhase_->getVal(phase);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getAdPllAmplitude(uint32_t *amplitude)
+{
+    try {
+        adPllAmplitude_->getVal(amplitude);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getAdPllLocked(uint32_t *lockStatus)
+{
+    try {
+        adPllLocked_->getVal(lockStatus);
     } catch (CPSWError &e) {
         fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
         throw e;

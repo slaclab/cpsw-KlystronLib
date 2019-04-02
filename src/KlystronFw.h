@@ -27,6 +27,16 @@ public:
     virtual void setCLK_KI(uint32_t KI)       = 0;
     virtual void setADPLL_KP(uint32_t KP)     = 0;
     virtual void setADPLL_KI(uint32_t KI)     = 0;
+    
+    virtual void getLoPllPhase(uint32_t *phase)            = 0;
+    virtual void getLoPllAmplitude(uint32_t *amplitude)    = 0;
+    virtual void getLoPllLocked(uint32_t *lockStatus)      = 0;
+    virtual void getClockPllPhase(uint32_t *phase)         = 0;
+    virtual void getClockPllAmplitude(uint32_t *amplitude) = 0;
+    virtual void getClockPllLocked(uint32_t *lockStatus)   = 0;
+    virtual void getAdPllPhase(uint32_t *phase)            = 0;
+    virtual void getAdPllAmplitude(uint32_t *amplitude)    = 0;
+    virtual void getAdPllLocked(uint32_t *lockStatus)      = 0;
 
     virtual void OutputEnable(bool enable)    = 0; /* Set this to 1 at startup */
     virtual void CWOutputEnable(bool enable)  = 0; 

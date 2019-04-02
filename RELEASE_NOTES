@@ -1,3 +1,6 @@
+R1.2.5-ued_llrf-1.1     04-02-2019  Kukhee Kim (khkim)
+                - add PLL loops monitoring PVs (LO, Clock and All-Digital PLL loops)
+                
 R1.2.5-ued_llrf-1.0     03-15-2019  Kukhee Kim (khkim)
                 - support 6 tiimeslot firmware for 360Hz operation
 
