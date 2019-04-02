@@ -54,6 +54,13 @@ protected:
     ScalVal_RO adPllAmplitude_;
     ScalVal_RO adPllLocked_;
     
+    ScalVal_RO loPllLossSignal_;
+    ScalVal_RO clockPllLossSignal_;
+    ScalVal_RO adPllLossSignal_;
+    ScalVal_RO loPllUnlockCounter_;
+    ScalVal_RO clockPllUnlockCounter_;
+    ScalVal_RO adPllUnlockCounter_;
+    
     ScalVal    OutputEnable_; 
     ScalVal    CWModeEnable_; 
     ScalVal    referenceChannel_; 
@@ -226,6 +233,13 @@ public:
     virtual void getAdPllAmplitude(uint32_t *amplitude);
     virtual void getAdPllLocked(uint32_t *lockStatus);
     
+    virtual void getLoPllLossSignal(uint32_t *loss);
+    virtual void getClockPllLossSignal(uint32_t *loss);
+    virtual void getAdPllLossSignal(uint32_t *loss);
+    virtual void getLoPllUnlockCounter(uint32_t *count);
+    virtual void getClockPllUnlockCounter(uint32_t *count);
+    virtual void getAdPllUnlockCounter(uint32_t *count);
+    
     virtual void OutputEnable(bool enable);
     virtual void CWOutputEnable(bool enable);
     virtual void setDebugStreamSelect(StreamId sid, StreamSel ssel);
@@ -359,6 +373,13 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
   adPllPhase_(          IScalVal_RO::create( pKlystron_->findByName("platform/adPllPhase") ) ),
   adPllAmplitude_(      IScalVal_RO::create( pKlystron_->findByName("platform/adPllAmplitude") ) ),
   adPllLocked_(         IScalVal_RO::create( pKlystron_->findByName("platform/adPllLocked") ) ),
+  
+  loPllLossSignal_(     IScalVal_RO::create( pKlystron_->findByName("platform/loPllLossOfSignal") ) ),
+  clockPllLossSignal_(  IScalVal_RO::create( pKlystron_->findByName("platform/clockPllLossOfSignal") ) ),
+  adPllLossSignal_(     IScalVal_RO::create( pKlystron_->findByName("platform/adPllLossOfSignal") ) ),
+  loPllUnlockCounter_(  IScalVal_RO::create( pKlystron_->findByName("platform/loPllLockedCounter") ) ),
+  clockPllUnlockCounter_(IScalVal_RO::create( pKlystron_->findByName("platform/clockPllLockedCounter") ) ),
+  adPllUnlockCounter_(  IScalVal_RO::create( pKlystron_->findByName("platform/adPllLockedCounter") ) ),
   
   OutputEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/OutputEnable") ) ),
   CWModeEnable_(        IScalVal::create( pKlystron_->findByName("SysgenMR/CWModeEnable") ) ),
@@ -689,6 +710,66 @@ void CKlystronFwAdapt::getAdPllLocked(uint32_t *lockStatus)
 {
     try {
         adPllLocked_->getVal(lockStatus);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getLoPllLossSignal(uint32_t *loss)
+{
+    try {
+        loPllLossSignal_->getVal(loss);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getClockPllLossSignal(uint32_t *loss)
+{
+    try {
+        clockPllLossSignal_->getVal(loss);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getAdPllLossSignal(uint32_t *loss)
+{
+    try {
+        adPllLossSignal_->getVal(loss);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getLoPllUnlockCounter(uint32_t *count)
+{
+    try {
+        loPllUnlockCounter_->getVal(count);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getClockPllUnlockCounter(uint32_t *count)
+{
+    try {
+        clockPllUnlockCounter_->getVal(count);
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
+}
+
+void CKlystronFwAdapt::getAdPllUnlockCounter(uint32_t *count)
+{
+    try {
+        adPllUnlockCounter_->getVal(count);
     } catch (CPSWError &e) {
         fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
         throw e;

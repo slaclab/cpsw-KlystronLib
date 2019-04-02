@@ -37,6 +37,13 @@ public:
     virtual void getAdPllPhase(uint32_t *phase)            = 0;
     virtual void getAdPllAmplitude(uint32_t *amplitude)    = 0;
     virtual void getAdPllLocked(uint32_t *lockStatus)      = 0;
+    
+    virtual void getLoPllLossSignal(uint32_t *loss)        = 0;
+    virtual void getClockPllLossSignal(uint32_t *loss)     = 0;
+    virtual void getAdPllLossSignal(uint32_t *loss)        = 0;
+    virtual void getLoPllUnlockCounter(uint32_t *count)    = 0;
+    virtual void getClockPllUnlockCounter(uint32_t *count) = 0;
+    virtual void getAdPllUnlockCounter(uint32_t *count)    = 0;
 
     virtual void OutputEnable(bool enable)    = 0; /* Set this to 1 at startup */
     virtual void CWOutputEnable(bool enable)  = 0; 
