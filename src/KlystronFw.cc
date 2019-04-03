@@ -33,8 +33,30 @@ typedef shared_ptr<CKlystronFwAdapt> KlystronFwAdapt;
 class CKlystronFwAdapt : public IKlystronFw, public IEntryAdapt {
 protected:
     Path pKlystron_;
+    Path pJesd0_;
+    Path pJesd1_;
 /* put ScalVals, etc. here */
 
+
+    ScalVal_RO JesdStatusValidCnt00_;
+    ScalVal_RO JesdStatusValidCnt01_;
+    ScalVal_RO JesdStatusValidCnt02_;
+    ScalVal_RO JesdStatusValidCnt03_;
+    ScalVal_RO JesdStatusValidCnt04_;
+    ScalVal_RO JesdStatusValidCnt05_;
+    ScalVal_RO JesdStatusValidCnt06_;
+    ScalVal_RO JesdStatusValidCnt07_;
+    
+    ScalVal_RO JesdStatusValidCnt10_;
+    ScalVal_RO JesdStatusValidCnt11_;
+    ScalVal_RO JesdStatusValidCnt12_;
+    ScalVal_RO JesdStatusValidCnt13_;
+    ScalVal_RO JesdStatusValidCnt14_;
+    ScalVal_RO JesdStatusValidCnt15_;
+    ScalVal_RO JesdStatusValidCnt16_;
+    ScalVal_RO JesdStatusValidCnt17_;
+
+    
     ScalVal    trigMode_;
     
     ScalVal    LO_KP_;
@@ -178,6 +200,8 @@ protected:
 
     std::map<int, ScalVal_RO> tempBytes_;
     
+    std::map<int, ScalVal_RO> jesdCnt0_;
+    std::map<int, ScalVal_RO> jesdCnt1_;
     
 // 
 //  Interlock RTM board
@@ -214,6 +238,9 @@ public:
         CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
 
 public:
+    
+    virtual void getJesdStatusValidCnt(uint32_t *cnt, int jesd_idx, int cnt_idx);
+    
     virtual void reset();
     
     virtual void setLO_KP(uint32_t KP);
@@ -354,7 +381,27 @@ public:
 CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
   pKlystron_(                                      p->findByName("AppTop/AppCore") ),
+  pJesd0_(                                       p->findByName("AppTop/AppTopJesd[0]") ),
+  pJesd1_(                                       p->findByName("AppTop/AppTopJesd[1]") ),
   
+  JesdStatusValidCnt00_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[0]") ) ),
+  JesdStatusValidCnt01_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[1]") ) ),
+  JesdStatusValidCnt02_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[2]") ) ),
+  JesdStatusValidCnt03_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[3]") ) ),
+  JesdStatusValidCnt04_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[4]") ) ),
+  JesdStatusValidCnt05_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[5]") ) ),
+  JesdStatusValidCnt06_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[6]") ) ),
+  JesdStatusValidCnt07_(  IScalVal_RO::create( pJesd0_->findByName("JesdRx/StatusValidCnt[7]") ) ),
+  
+  JesdStatusValidCnt10_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[0]") ) ),
+  JesdStatusValidCnt11_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[1]") ) ),
+  JesdStatusValidCnt12_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[2]") ) ),
+  JesdStatusValidCnt13_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[3]") ) ),
+  JesdStatusValidCnt14_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[4]") ) ),
+  JesdStatusValidCnt15_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[5]") ) ),
+  JesdStatusValidCnt16_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[6]") ) ),
+  JesdStatusValidCnt17_(  IScalVal_RO::create( pJesd1_->findByName("JesdRx/StatusValidCnt[7]") ) ),
+    
   trigMode_(            IScalVal::create( pKlystron_->findByName("TriggerMode") ) ),
   
   LO_KP_(               IScalVal::create( pKlystron_->findByName("platform/loPllKp") ) ),
@@ -557,7 +604,36 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> 
     tempBytes_[14] = bay1Temp3MSB_;
     tempBytes_[15] = bay1Temp3LSB_;
     
-     
+    jesdCnt0_[0] = JesdStatusValidCnt00_;
+    jesdCnt0_[1] = JesdStatusValidCnt01_;
+    jesdCnt0_[2] = JesdStatusValidCnt02_;
+    jesdCnt0_[3] = JesdStatusValidCnt03_;
+    jesdCnt0_[4] = JesdStatusValidCnt04_;
+    jesdCnt0_[5] = JesdStatusValidCnt05_;
+    jesdCnt0_[6] = JesdStatusValidCnt06_;
+    jesdCnt0_[7] = JesdStatusValidCnt07_;
+
+    jesdCnt1_[0] = JesdStatusValidCnt10_;
+    jesdCnt1_[1] = JesdStatusValidCnt11_;
+    jesdCnt1_[2] = JesdStatusValidCnt12_;
+    jesdCnt1_[3] = JesdStatusValidCnt13_;
+    jesdCnt1_[4] = JesdStatusValidCnt14_;
+    jesdCnt1_[5] = JesdStatusValidCnt15_;
+    jesdCnt1_[6] = JesdStatusValidCnt16_;
+    jesdCnt1_[7] = JesdStatusValidCnt17_;         
+}
+
+
+void CKlystronFwAdapt::getJesdStatusValidCnt(uint32_t *cnt, int jesd_idx, int cnt_idx)
+{
+   try {
+        if(!jesd_idx) jesdCnt0_[cnt_idx]->getVal(cnt);
+        else          jesdCnt1_[cnt_idx]->getVal(cnt);
+        
+    } catch (CPSWError &e) {
+        fprintf(stderr, "CPSW Error: %s\n", e.getInfo().c_str());
+        throw e;
+    }
 }
 
 void CKlystronFwAdapt::reset()

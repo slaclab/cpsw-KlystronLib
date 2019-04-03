@@ -19,6 +19,8 @@ public:
     typedef enum StremID { STREAM_0 = 0, STREAM_1 = 1, STREAM_2 =2, STREAM_3=3, STREAM_4=4, STREAM_5=5 } StreamId;
     typedef enum StreamSel { BAY0CH0 = 0, BAY0CH1=1, BAY0CH2=2, BAY0CH3=3, BAY0CH4=4, BAY0CH5=5, BAY1CH0=6, BAY1CH1=7, BAY1CH2=8, BAY2CH3=9, BAY2CH4=10, BAY2CH5=11, DAC_OUTPUT=12, PHASE_ERR=13 } StreamSel;
     
+    virtual void getJesdStatusValidCnt(uint32_t *cnt, int jesd_idx, int cnt_idx) = 0;
+    
     virtual void reset()                      = 0;
 
     virtual void setLO_KP(uint32_t KP)        = 0;
