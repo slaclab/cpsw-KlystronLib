@@ -1,4 +1,4 @@
-CPSW_DIR=/afs/slac/g/lcls/package/cpsw/framework/R3.6.4/src
+CPSW_DIR=/afs/slac/g/lcls/package/cpsw/framework/R4.1.2/src
 
 CCACHE_DISABLE=1
 
@@ -12,13 +12,14 @@ INSTALL_DIR=../
 HEADERS += KlystronFw.h
 
 KlystronLib_SRCS  = TrigPulse.cc KlystronFw.cc
-KlystronLib_LIBS  = yaml-cpp $(CPSW_LIBS)
+KlystronLib_LIBS  = $(CPSW_LIBS)
 
 SHARED_LIBRARIES_YES+=KlystronLib
 STATIC_LIBRARIES_YES+=KlystronLib
 
 Klystron_tst_SRCS =  KlystronFw_tst.cc
-Klystron_tst_LIBS = KlystronLib.a cpsw.a yaml-cpp.a boost_system.a pthread dl rt
+Klystron_tst_LIBS = KlystronLib
+Klystron_tst_LIBS += $(CPSW_LIBS)
 
 PROGRAMS=Klystron_tst
 
