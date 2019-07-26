@@ -123,6 +123,7 @@ public:
     virtual void setAtten(uint32_t att, int index) = 0;
     virtual void getTemp(int bay, int sensor, double *temp) = 0;
     virtual void getTemp(int index, double *temp) = 0;
+    virtual void acqTemp(void) = 0;
     virtual void getIntPhaseError(int32_t *phase) = 0;
     virtual void setCKPhase(uint32_t ckPhase) = 0;
 

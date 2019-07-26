@@ -1,4 +1,4 @@
-CPSW_DIR=/afs/slac/g/lcls/package/cpsw/framework/R4.1.2/src
+CPSW_DIR=/afs/slac/g/lcls/package/cpsw/framework/R3.6.4/src
 
 CCACHE_DISABLE=1
 
@@ -9,9 +9,9 @@ include $(CPSW_DIR)/defs.mak
 
 INSTALL_DIR=../
 
-HEADERS += KlystronFw.h
+HEADERS += TrigPulse.cc KlystronFw.h
 
-KlystronLib_SRCS  = TrigPulse.cc KlystronFw.cc
+KlystronLib_SRCS  = KlystronFw.cc
 KlystronLib_LIBS  = $(CPSW_LIBS)
 
 SHARED_LIBRARIES_YES+=KlystronLib

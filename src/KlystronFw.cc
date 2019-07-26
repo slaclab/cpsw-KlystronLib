@@ -161,6 +161,7 @@ protected:
     ScalVal    atten4inBay1_;
     ScalVal    atten5inBay1_;
     
+    ScalVal    bay0TempConfig_;
     ScalVal_RO bay0Temp0MSB_;
     ScalVal_RO bay0Temp0LSB_;
     ScalVal_RO bay0Temp1MSB_;
@@ -170,6 +171,7 @@ protected:
     ScalVal_RO bay0Temp3MSB_;
     ScalVal_RO bay0Temp3LSB_;
     
+    ScalVal    bay1TempConfig_;
     ScalVal_RO bay1Temp0MSB_;
     ScalVal_RO bay1Temp0LSB_;
     ScalVal_RO bay1Temp1MSB_;
@@ -235,7 +237,7 @@ protected:
 
 
 public:
-        CKlystronFwAdapt(Key &k, ConstPath p, shared_ptr<const CEntryImpl> ie);
+        CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
 
 public:
     
@@ -343,6 +345,7 @@ public:
     virtual void setAtten(uint32_t att, int index);
     virtual void getTemp(int bay, int sensor, double *temp);
     virtual void getTemp(int index, double *temp);
+    virtual void acqTemp(void);
     virtual void getIntPhaseError(int32_t *phase);
     virtual void setCKPhase(uint32_t ckPhase);
 
@@ -378,7 +381,7 @@ public:
     virtual void cmdRtmClearFault(void);
 };
 
-CKlystronFwAdapt::CKlystronFwAdapt(Key &k, ConstPath p, shared_ptr<const CEntryImpl> ie) : 
+CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
   pKlystron_(                                      p->findByName("AppTop/AppCore") ),
   pJesd0_(                                       p->findByName("AppTop/AppTopJesd[0]") ),
@@ -504,7 +507,8 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, ConstPath p, shared_ptr<const CEntryI
   atten3inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[3]/SetValue") ) ),
   //atten4inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[4]/SetValue") ) ),   // bay1 doesn't have 4 and 5
   //atten5inBay1_(         IScalVal::create( pKlystron_->findByName("AmcMrLlrfUpConvert/AttHMC624[5]/SetValue") ) ),   // bay1 doens't have 4 and 5
-  
+ 
+  bay0TempConfig_(       IScalVal::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[0]/Config") ) ), 
   bay0Temp0MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[0]/TempMSByte") ) ),
   bay0Temp0LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[0]/TempLSByte") ) ),
   bay0Temp1MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[1]/TempMSByte") ) ),
@@ -513,7 +517,8 @@ CKlystronFwAdapt::CKlystronFwAdapt(Key &k, ConstPath p, shared_ptr<const CEntryI
   bay0Temp2LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[2]/TempLSByte") ) ),
   bay0Temp3MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[3]/TempMSByte") ) ),
   bay0Temp3LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfDownConvert/Adt7420[3]/TempLSByte") ) ),
-  
+ 
+  bay1TempConfig_(       IScalVal::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[0]/Config") ) ), 
   bay1Temp0MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[0]/TempMSByte") ) ),
   bay1Temp0LSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[0]/TempLSByte") ) ),
   bay1Temp1MSB_(         IScalVal_RO::create(pKlystron_->findByName("AmcMrLlrfUpConvert/Adt7420[1]/TempMSByte") ) ),
@@ -1459,6 +1464,14 @@ void CKlystronFwAdapt::getTemp(int index, double *temp)
         *temp = ( (MSB<<8) + LSB ) / 128.0;
     }
 
+}
+
+void CKlystronFwAdapt::acqTemp(void)
+{
+    uint8_t v = (0x1 << 7) | (0x1 << 5);
+
+    bay0TempConfig_->setVal(v);
+    bay1TempConfig_->setVal(v);    
 }
 
 void CKlystronFwAdapt::getIntPhaseError(int32_t *phase)

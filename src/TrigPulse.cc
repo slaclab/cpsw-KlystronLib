@@ -18,7 +18,7 @@ protected:
     ScalVal    trigPolarity_;
 
 public:
-        CTrigPulseAdapt(Key &k, ConstPath p, shared_ptr<const CEntryImpl> ie);
+        CTrigPulseAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
 
 public:
     virtual void setTrigDelay     (double value_ns, double freq_MHz = 119.0);
@@ -27,7 +27,7 @@ public:
     virtual void setTrigPolarity  (TrigPolarity polarity);
 };
 
-CTrigPulseAdapt::CTrigPulseAdapt(Key &k, ConstPath p, shared_ptr<const CEntryImpl> ie) : 
+CTrigPulseAdapt::CTrigPulseAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
   trigDelay_(    IScalVal::create( p_->findByName("PulseDelay") ) ),
   trigWidth_(    IScalVal::create( p_->findByName("PulseWidth") ) ),
