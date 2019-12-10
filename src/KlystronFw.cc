@@ -237,7 +237,7 @@ protected:
 
 
 public:
-        CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie);
+        CKlystronFwAdapt(Key &k, ConstPath p, shared_ptr<const CEntryImpl> ie);
 
 public:
     
@@ -381,7 +381,7 @@ public:
     virtual void cmdRtmClearFault(void);
 };
 
-CKlystronFwAdapt::CKlystronFwAdapt(Key &k, Path p, shared_ptr<const CEntryImpl> ie) : 
+CKlystronFwAdapt::CKlystronFwAdapt(Key &k, ConstPath p, shared_ptr<const CEntryImpl> ie) : 
   IEntryAdapt(k, p, ie),
   pKlystron_(                                      p->findByName("AppTop/AppCore") ),
   pJesd0_(                                       p->findByName("AppTop/AppTopJesd[0]") ),
