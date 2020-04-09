@@ -4,6 +4,7 @@
 #include <string>
 #include <dlfcn.h>
 
+#include <getopt.h>
 #include <stdio.h>
 #include <string>
 #include <sstream>
