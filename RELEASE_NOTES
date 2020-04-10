@@ -1,3 +1,8 @@
+R1.3.0           04-09-2020   Kukhee Kim (khkim)
+                - merge ued_llrf to master
+                - support cpsw/framework R4.4.1, build root-2019.08
+
+
 R1.2.5-ued_llrf-3.0     04-09-2020  Kukhee Kim (khkim)
                 - support cpsw/framework R4.4.1, buildroot-2019.08
 
