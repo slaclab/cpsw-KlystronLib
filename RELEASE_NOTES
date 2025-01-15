@@ -1,3 +1,7 @@
+R1.3.1           01-13-2025   Jeremy Lorelli (lorelli)
+                - Update to CPSW R4.5.2
+                - Makefile adjustments for S3DF environment
+
 R1.3.0           04-09-2020   Kukhee Kim (khkim)
                 - merge ued_llrf to master
                 - support cpsw/framework R4.4.1, build root-2019.08
